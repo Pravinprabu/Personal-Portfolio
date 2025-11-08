@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Portfolio</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com"/>
+  <style>
+   
+    :root{
+      --bg-1: #0a0a0a;
+      --bg-2: #111;
+      --text: #eaeaea;
+      --muted: #a8a8a8;
+      --accent: #9be7ff;     
+      --accent-2:#c8c8c8;    
+      --card: #151515;
+      --glass: rgba(255,255,255,.06);
+      --ring: rgba(155,231,255,.25);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --blur: blur(10px);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; color:var(--text); background: radial-gradient(1200px 800px at 70% -10%, rgba(255,255,255,.08), transparent 60%),
+                                    radial-gradient(1000px 700px at -10% 30%, rgba(255,255,255,.05), transparent 60%),
+                                    linear-gradient(180deg, #000, #0b0b0b 40%, #111);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      overflow-x:hidden;
+    }
+
+    
+    .page-wipe{
+      position:fixed; inset:0; pointer-events:none; z-index:9999;
+      background:linear-gradient(90deg,#000 0%, #101010 50%, #000 100%);
+      transform:translateX(-100%); transition: transform .2s ease;
+    }
+    .page-wipe.active{ transform:translateX(0) }
+
+    
+    #particles-js{
+      position:fixed; inset:0; z-index:-1; opacity:.55; pointer-events:none;
+      mix-blend-mode:screen;
+    }
+
+    
+    header{
+      position:sticky; top:0; z-index:50; backdrop-filter:saturate(150%) blur(8px);
+      background: linear-gradient(180deg, rgba(0,0,0,.8), rgba(0,0,0,.35));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav{
+      max-width:1200px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; gap:16px;
+    }
+    .brand{
+      font-weight:700; letter-spacing:.4px; font-size:1.05rem;
+      background: linear-gradient(90deg, #fff, #9be7ff);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .spacer{flex:1}
+    .nav a{
+      color:var(--text); text-decoration:none; font-size:.95rem; padding:8px 12px; border-radius:999px;
+      border:1px solid transparent;
+    }
+    .nav a:hover{ border-color:var(--ring); background:var(--glass)}
+    .cta{
+      display:inline-flex; align-items:center; gap:10px; padding:10px 16px; border-radius:999px;
+      background:linear-gradient(90deg, rgba(155,231,255,.15), rgba(255,255,255,.06));
+      border:1px solid var(--ring); box-shadow: var(--shadow);
+    }
+
+    
+    section{
+      min-height:100svh; display:flex; align-items:center; justify-content:center; padding:80px 20px;
+      opacity:0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease;
+    }
+    section.visible{ opacity:1; transform:none }
+    .container{ width:100%; max-width:1200px; margin:0 auto }
+
+    
+    .hero{
+      text-align:center; gap:22px; display:grid; place-items:center;
+    }
+    .tag{ color:var(--muted); font-size:.95rem; letter-spacing:.15em; text-transform:uppercase }
+    .headline{
+      font-size:clamp(2rem, 4.5vw, 3.6rem); font-weight:800; line-height:1.1; margin:8px 0 12px;
+    }
+    .highlight{ color:var(--accent); text-shadow:0 0 20px rgba(155,231,255,.25) }
+    .sub{ color:var(--muted); max-width:760px; margin:0 auto 26px }
+    .actions{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center }
+    .btn{
+      background:transparent; color:var(--text); border:1px solid var(--ring); padding:12px 18px; border-radius:12px;
+      text-decoration:none; display:inline-flex; align-items:center; gap:10px;
+    }
+    .btn.primary{ background:linear-gradient(90deg, #1a1a1a, #0f0f0f); box-shadow: var(--shadow) }
+    .btn:hover{ transform:translateY(-2px); transition:.2s }
+
+    
+    .grid{
+      display:grid; gap:18px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.07); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
+    }
+    .about .left{ grid-column: span 7 }
+    .about .right{ grid-column: span 5 }
+    @media (max-width:960px){
+      .about .left, .about .right{ grid-column:1 / -1 }
+    }
+
+    .h2{ font-size:clamp(1.6rem, 2.8vw, 2.2rem); margin:0 0 10px; letter-spacing:.3px }
+    .p{ color:var(--muted); line-height:1.65 }
+
+    /*-skills-*/
+    .skills-list{
+       flex-wrap:wrap; gap:10px;
+    }
+    .chip{
+      padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background:var(--glass);
+      display:inline-flex; align-items:center; gap:8px; font-size:.95rem;
+    }
+
+    /* 
+    -Projects-*/
+    .projects-grid{
+      display:grid; gap:18px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      margin-top:10px;
+    }
+    .project{
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.07); border-radius:18px; padding:18px; display:flex; flex-direction:column; gap:8px;
+      transition: transform .2s ease, border-color .2s ease;
+    }
+    .project:hover{ transform: translateY(-4px); border-color: var(--ring) }
+    .project h3{ margin:6px 0 4px; font-size:1.1rem }
+    .project p{ color:var(--muted); font-size:.95rem }
+    .project a{ color:var(--accent); text-decoration:none; font-size:.95rem }
+
+    /*-Social media links-*/
+    .socials{ display:flex; gap:10px; margin-top:18px; justify-content:center }
+    .icon-btn{
+      width:42px; height:42px; border-radius:10px; display:grid; place-items:center;
+      background:var(--glass); border:1px solid rgba(255,255,255,.07)
+    }
+    .icon-btn:hover{ box-shadow:0 0 0 6px rgba(155,231,255,.12); transform:translateY(-2px) }
+
+
+    footer{ padding:32px 20px; text-align:center; color:var(--muted) }
+
+    
+    .row{ display:flex; gap:12px; flex-wrap:wrap }
+    .mt-2{ margin-top:12px } .mt-4{ margin-top:24px } .mt-6{ margin-top:36px }
+  </style>
+</head>
+<body>
+  
+  <div class="page-wipe" id="pageWipe"></div>
+
+  <!-- Particles -->
+  <div id="particles-js"></div>
+
+  <!-- Header -->
+  <header>
+    <nav class="nav">
+      <div class="brand">Welcome to my Portfolio</div>
+      <div class="spacer"></div>
+      <a href="#home" class="navlink">Home</a>
+      <a href="#about" class="navlink">About</a>
+      <a href="#skills" class="navlink">Skills</a>
+      <a href="#projects" class="navlink">Projects</a>
+      <a href="#contact" class="navlink">Contact</a>
+      <a class="cta" href="resume.pdf" download>
+        
+
+        <lord-icon src="https://cdn.lordicon.com/uzrqzyeh.json" trigger="hover" style="width:22px;height:22px"></lord-icon>
+        Download Resume
+      </a>
+    </nav>
+  </header>
+
+  
+  <section id="home" class="hero">
+    <div class="container">
+      <div class="tag">Hello, I’m <span class="highlight">Pravin</span></div>
+      <h1 class="headline">Building fast, elegant experiences for the web.</h1>
+      <p class="sub">
+        I’m a developer focused on creating delightful user interfaces and performant web apps.
+        I love to code, accessible design, and crisp micro-interactions.
+      </p>
+      <div class="actions">
+        <a class="btn primary navlink" href="#projects">
+          <lord-icon src="https://cdn.lordicon.com/akuwjdzh.json" trigger="loop" delay="1500" style="width:22px;height:22px"></lord-icon>
+          View My Work
+        </a>
+        <a class="btn navlink" href="#contact">
+          <lord-icon src="https://cdn.lordicon.com/ghhwiltn.json" trigger="hover" style="width:22px;height:22px"></lord-icon>
+          Contact Me
+        </a>
+        <a class="btn" href="resume.pdf" download>
+          <lord-icon src="https://cdn.lordicon.com/ajfmgpbq.json" trigger="hover" style="width:22px;height:22px"></lord-icon>
+          Download Resume
+        </a>
+      </div>
+      <div class="socials mt-4">
+        <a class="icon-btn" href="https://github.com/Pravinprabu" target="_blank" aria-label="GitHub" title="GitHub">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.79 23.4c.6.11.82-.26.82-.58v-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.4-1.34-1.77-1.34-1.77-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.83 2.82 1.3 3.51.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.4 1.24-3.25-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.24a11.5 11.5 0 0 1 6 0c2.28-1.56 3.29-1.24 3.29-1.24.66 1.65.24 2.87.12 3.17.77.85 1.24 1.93 1.24 3.25 0 4.63-2.8 5.66-5.48 5.96.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .5z"/></svg>
+        </a>
+        <a class="icon-btn" href="https://www.linkedin.com/in/pravin-p-84092832a/" target="_blank" aria-label="LinkedIn" title="LinkedIn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V24h-4V8.5zm7.5 0h3.8v2.1h.05c.53-1 1.82-2.1 3.74-2.1C20.3 8.5 24 11 24 16.1V24h-4v-7c0-1.7-.03-3.9-2.4-3.9-2.4 0-2.77 1.86-2.77 3.77V24h-4V8.5z"/></svg>
+        </a>
+        <a class="icon-btn" href="https://www.instagram.com/_pessimistic_pravinprabu/" target="_blank" aria-label="Instagram" title="Instagram">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.9.2 2.3.4.6.2 1 .4 1.4.8.4.4.6.8.8 1.4.2.4.3 1.1.4 2.3.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.9-.4 2.3-.2.6-.4 1-.8 1.4-.4.4-.8.6-1.4.8-.4.2-1.1.3-2.3.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.9-.2-2.3-.4-.6-.2-1-.4-1.4-.8-.4-.4-.6-.8-.8-1.4-.2-.4-.3-1.1-.4-2.3C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.9.4-2.3.2-.6.4-1 .8-1.4.4-.4.8-.6 1.4-.8.4-.2 1.1-.3 2.3-.4C8.4 2.2 8.8 2.2 12 2.2m0-2.2C8.7 0 8.3 0 7 0 5.7.1 4.8.2 4.1.4 3.2.7 2.5 1.2 1.8 1.9 1.1 2.6.6 3.3.3 4.2c-.2.7-.3 1.6-.4 2.9C0 8.3 0 8.7 0 12s0 3.7.1 4.9c.1 1.3.2 2.2.4 2.9.3.9.8 1.6 1.5 2.3.7.7 1.4 1.2 2.3 1.5.7.2 1.6.3 2.9.4 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c1.3-.1 2.2-.2 2.9-.4.9-.3 1.6-.8 2.3-1.5.7-.7 1.2-1.4 1.5-2.3.2-.7.3-1.6.4-2.9.1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.1-1.3-.2-2.2-.4-2.9-.3-.9-.8-1.6-1.5-2.3C21.4.6 20.7.2 19.8 0c-.7-.2-1.6-.3-2.9-.4C15.7 0 15.3 0 12 0z"/><path d="M12 5.8A6.2 6.2 0 1 0 12 18.2 6.2 6.2 0 1 0 12 5.8m0-2.2a8.4 8.4 0 1 1 0 16.8 8.4 8.4 0 0 1 0-16.8z"/><circle cx="18.4" cy="5.6" r="1.44"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  
+  <section id="about" class="about">
+    <div class="container grid">
+      <div class="left card">
+        <h2 class="h2">About Me</h2>
+        <p class="p">
+         I’m Pravin P, an aspiring Full-Stack Developer pursuing a Bachelor’s degree in Information Technology.
+I’m passionate about building clean, responsive, and engaging web applications.
+I'm interested in modern web designs, UI/UX and front-end frameworks.Not only front-end I'm also lerning and working with backend Technologies and AI models. 
+As an active learner, I constantly explore new technologies and enhance my development skills.
+My goal is to become a versatile developer who transforms creative ideas into impactful digital experiences.
+        </p>
+        <div class="row mt-4">
+          <a class="btn" href="pravinprabu77@gmail.com">
+            <lord-icon src="https://cdn.lordicon.com/abwrkdvl.json" trigger="hover" style="width:22px;height:22px"></lord-icon>
+            Hire Me
+          </a>
+          <a class="btn" href="C:\Users\WELCOME\OneDrive\Desktop\portfolio\Pravin_P_Resume.pdf" download>
+            <lord-icon src="https://cdn.lordicon.com/ajfmgpbq.json" trigger="hover" style="width:22px;height:22px"></lord-icon>
+            Download Resume
+          </a>
+        </div>
+      </div>
+      <div class="right card">
+        <h2 class="h2">Quick Facts</h2>
+        <ul class="p">
+          <li>Lives in: Thiruvallur</li>
+          <li>Speciality: UI/UX , front-end, Web Designs </li>
+          <li>Open to: Part-time & freelance</li>
+          <li>Timezone: IST (UTC+5:30)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="container card">
+      <h2 class="h2">Skills</h2><br>
+      
+      <div class="skills-list mt-2">
+  
+  <div class="skill-group">
+    <h4 class="h4">Frontend :</h4>
+
+    <span class="chip"><img src="images/html.png" trigger="hover" style="width:30px;height:30px"></lord-icon> HTML5</span>
+    <span class="chip"><img src="images/css3.png" trigger="hover" style="width:30px;height:30px"></lord-icon> CSS3</span>
+    <span class="chip"><img src="images/js.png" trigger="hover" style="width:30px;height:30px"></lord-icon> JavaScript</span>
+    <span class="chip"><img src="images/react-js.png" trigger="hover" style="width:30px;height:30px"></lord-icon> React.js</span>
+  </div>
+
+  <div class="skill-group">
+    <h4 class="h4">Backend :</h4>
+    <span class="chip"><img src="images/python.png" trigger="hover" style="width:30px;height:30px"></lord-icon> Python</span>
+    <span class="chip"><img src="images/java.png" trigger="hover" style="width:30px;height:30px"></lord-icon> Java</span>
+    <span class="chip"><img src="images/git.png" trigger="hover" style="width:30px;height:30px"></lord-icon> Git</span>
+    <span class="chip"><img src="images/github.png" trigger="hover" style="width:30px;height:30px"></lord-icon> Github</span>
+  </div>
+
+  <div class="skill-group">
+    <h4 class="h4">Design :</h4>
+    <span class="chip"><img src="images/figma.png" trigger="hover" style="width:30px;height:30px"></lord-icon> Figma</span>
+    <span class="chip"><img src="images/canva.png" trigger="hover" style="width:30px;height:30px"></lord-icon> Canva</span>
+  </div>
+
+</div>
+
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="container">
+      <h2 class="h2">Projects</h2>
+      <div class="projects-grid mt-2">
+        <article class="project">
+          <h3>Project One</h3>
+          <p>A Specific Website For Philatelists.</p>
+          <a href="#" target="_blank">Live Demo →</a>
+        </article>
+        <article class="project">
+          <h3>Project Two</h3>
+          <p>An AI-Chatbot to help the pharma scientists</p>
+          <a href="#" target="_blank">GitHub Repo →</a>
+        </article>
+        <article class="project">
+          <h3>Project Three</h3>
+          <p>Design system starter with tokens, themes, and reusable components.</p>
+          <a href="#" target="_blank">Case Study →</a>
+        </article>
+        <article class="project">
+          <h3>Project Four</h3>
+          <p>Responsive dashboard with charts and keyboard-friendly navigation.</p>
+          <a href="#" target="_blank">Live Demo →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container card" style="text-align:center">
+      <h2 class="h2">Let’s build something great</h2>
+      <p class="p">My inbox is always open. Whether you have a question or just want to say hi.</p>
+      <div class="actions" style="justify-content:center">
+        <a class="btn primary" href="mailto:you@example.com">
+          <lord-icon src="https://cdn.lordicon.com/abwrkdvl.json" trigger="hover" style="width:22px;height:22px"></lord-icon>
+          Send an Email
+        </a>
+        <a class="btn" href="https://cal.com/" target="_blank">
+          <lord-icon src="https://cdn.lordicon.com/zpxybbhl.json" trigger="hover" style="width:22px;height:22px"></lord-icon>
+          Book a Call
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>© <span id="year"></span> Your Name — Crafted with care.</footer>
+
+  <!-- Scripts: particles.js + Lordicon + small JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js" defer></script>
+  <script src="https://cdn.lordicon.com/lordicon.js" defer></script>
+
+  <script>
+    // ---------- Year ----------
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ---------- Section Reveal on Scroll ----------
+    const sections = document.querySelectorAll('section');
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+    sections.forEach(s=>io.observe(s));
+
+    // ---------- Smooth Wipe Transition for In-Page Nav ----------
+    const wipe = document.getElementById('pageWipe');
+    function wipeTo(hash){
+      wipe.classList.add('active');
+      setTimeout(()=>{ location.hash = hash; }, 260);
+      setTimeout(()=> wipe.classList.remove('active'), 650);
+    }
+    document.querySelectorAll('.navlink').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        const href = a.getAttribute('href') || '';
+        if(href.startsWith('#')){
+          e.preventDefault();
+          wipeTo(href);
+        }
+      });
+    });
+
+    // ---------- particles.js setup ----------
+    // pleasant black/white mix; particles react (repulse) to cursor
+    window.addEventListener('load', ()=>{
+      if(window.particlesJS){
+        particlesJS('particles-js', {
+          "particles": {
+            "number": { "value": 70, "density": { "enable": true, "value_area": 900 } },
+            "color": { "value": ["#ffffff", "#dfe9f3"] },
+            "shape": { "type": "circle" },
+            "opacity": { "value": 0.45, "random": true },
+            "size": { "value": 3, "random": true },
+            "line_linked": { "enable": true, "distance": 140, "color": "#cfcfcf", "opacity": 0.25, "width": 1 },
+            "move": { "enable": true, "speed": 1.2, "direction": "none", "out_mode": "out" }
+          },
+          "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+              "onhover": { "enable": true, "mode": ["repulse","grab"] },
+              "onclick": { "enable": true, "mode": "push" },
+              "resize": true
+            },
+            "modes": {
+              "grab": { "distance": 160, "line_linked": { "opacity": 0.35 } },
+              "repulse": { "distance": 90, "duration": 0.4 },
+              "push": { "particles_nb": 3 }
+            }
+          },
+          "retina_detect": true
+        });
+      }
+    });
+  </script>
+</body>
+</html>
