@@ -10,23 +10,23 @@
   <style>
     /* ── TOKEN SYSTEM ───────────────────────────────────────────── */
     :root {
-      --ivory:     #FAFAF8;
-      --parchment: #F2EEE7;
-      --warm-100:  #E8E2D8;
-      --warm-200:  #D4CBBA;
-      --gold:      #C8A96E;
-      --gold-light:#E2C98A;
-      --gold-dim:  rgba(200,169,110,.18);
-      --ink:       #1A1714;
-      --ink-2:     #3D3830;
-      --muted:     #7C6E5A;
-      --muted-2:   #A89880;
+      --ivory:     #FFFFFF;
+      --parchment: #F7F7F7;
+      --warm-100:  #E4E4E4;
+      --warm-200:  #CCCCCC;
+      --gold:      #C0392B;
+      --gold-light:#E74C3C;
+      --gold-dim:  rgba(192,57,43,.10);
+      --ink:       #111111;
+      --ink-2:     #2D2D2D;
+      --muted:     #4A4A4A;
+      --muted-2:   #777777;
       --white:     #FFFFFF;
       --radius:    4px;
       --radius-lg: 12px;
-      --shadow-sm: 0 2px 12px rgba(26,23,20,.06);
-      --shadow-md: 0 6px 32px rgba(26,23,20,.10);
-      --shadow-lg: 0 16px 64px rgba(26,23,20,.13);
+      --shadow-sm: 0 2px 12px rgba(0,0,0,.07);
+      --shadow-md: 0 6px 32px rgba(0,0,0,.12);
+      --shadow-lg: 0 16px 64px rgba(0,0,0,.15);
       --transition: .28s cubic-bezier(.4,0,.2,1);
     }
 
@@ -132,9 +132,9 @@
     .hero-tag {
       display: inline-block;
       font-size: .8rem; font-weight: 600; letter-spacing: .16em;
-      text-transform: uppercase; color: var(--gold);
-      border: 1px solid var(--gold-dim);
-      background: var(--gold-dim);
+      text-transform: uppercase; color: #C0392B;
+      border: 1.5px solid rgba(192,57,43,.3);
+      background: rgba(192,57,43,.07);
       padding: 6px 14px; border-radius: 999px; margin-bottom: 28px;
     }
     .hero-headline {
@@ -155,23 +155,25 @@
     /* Monogram ornament */
     .hero-monogram {
       display: flex; align-items: center; justify-content: center;
-      position: relative;
+      position: relative; padding: 60px;
     }
     .monogram-bg {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 26vmin; font-weight: 700; font-style: italic;
-      color: transparent;
-      -webkit-text-stroke: 1.5px var(--warm-200);
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 700; font-style: italic;
+      color: var(--ink);
       line-height: 1; user-select: none;
-      position: relative;
+      position: relative; z-index: 1;
+      letter-spacing: .02em;
     }
+    .monogram-bg span { color: var(--gold); }
     .monogram-ring {
-      position: absolute; inset: -24px;
-      border: 1px solid var(--warm-100); border-radius: 50%;
+      position: absolute; inset: 0;
+      border: 2px solid var(--warm-100); border-radius: 50%;
     }
     .monogram-ring-2 {
-      position: absolute; inset: -48px;
-      border: 1px dashed var(--warm-200); border-radius: 50%; opacity: .5;
+      position: absolute; inset: -20px;
+      border: 1.5px dashed var(--warm-200); border-radius: 50%; opacity: .7;
     }
 
     /* ── BUTTONS ─────────────────────────────────────────────────── */
@@ -338,12 +340,12 @@
     }
 
     /* ── CONTACT ─────────────────────────────────────────────────── */
-    #contact { background: var(--ink); }
-    #contact .eyebrow { color: var(--gold-light); }
+    #contact { background: #1A1A1A; }
+    #contact .eyebrow { color: #E74C3C; }
     #contact .section-title {
-      color: var(--ivory); border-bottom-color: rgba(255,255,255,.1);
+      color: #FFFFFF; border-bottom-color: rgba(255,255,255,.12);
     }
-    #contact .section-title::after { background: var(--gold); }
+    #contact .section-title::after { background: #C0392B; }
     .contact-inner { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
     .contact-copy p {
       font-size: 1.1rem; color: rgba(250,250,248,.65); line-height: 1.7; max-width: 480px;
@@ -431,7 +433,7 @@
       <div class="hero-monogram" aria-hidden="true">
         <div class="monogram-ring-2"></div>
         <div class="monogram-ring"></div>
-        <span class="monogram-bg">P</span>
+        <span class="monogram-bg">Pravin <span>P</span></span>
       </div>
     </div>
   </section>
@@ -446,10 +448,10 @@
           <div class="card-title">Hello, I'm Pravin P.</div>
           <p>
           Currently pursuing a B.Tech in Information Technology, I spend most of my time at the intersection of design sensibility and engineering precision. I build web applications that are fast, accessible, and considered — from the first pixel to the last API call.</p>
-          <p style="margin-top:14px;">          
+          <p style="margin-top:14px;">
           I'm not just a frontend developer who dabbles in backend. I'm deliberately building depth across the full stack, with a growing focus on AI integration and systems that scale. My goal is simple: write software that matters.</p>
           <div class="card-actions">
-            <a class="btn btn-primary" href="mailto:pravinprabu77@gmail.com">Hire Me</a>
+            <a class="btn btn-primary" href="mailto:pravinprabu78@gmail.com">Hire Me</a>
             <a class="btn btn-outline" href="Pravin-Resume.pdf" download>↓ Download Resume</a>
           </div>
         </div>
@@ -506,10 +508,10 @@
         </div>
 
         <div>
-          <p class="skill-group-label">Programming Languages</p>
+          <p class="skill-group-label">Programming Skills</p>
           <div class="chips">
-            <span class="chip"><img src="images/C.png" alt=""> C</span>
-            <span class="chip"><img src="images/Cpp.png" alt=""> C++</span>
+            <span class="chip"><img src="images/c.png" alt=""> C</span>
+            <span class="chip"><img src="images/c++.png" alt=""> C++</span>
           </div>
         </div>
 
@@ -588,7 +590,16 @@
           </div>
         </div>
 
-        
+        <div class="exp-item">
+          <div class="exp-meta">
+            <span class="exp-company">Cognifyz</span>
+            <span class="exp-duration">1 month</span>
+          </div>
+          <div>
+            <h3 class="exp-role">Frontend Developer Intern</h3>
+            <p class="exp-desc">Built responsive web interfaces with HTML, CSS, and JavaScript. Delivered all tasks within deadlines while honing clean code practices and version control discipline.</p>
+          </div>
+        </div>
 
         <div class="exp-item">
           <div class="exp-meta">
@@ -612,16 +623,6 @@
           </div>
         </div>
 
-        <div class="exp-item">
-          <div class="exp-meta">
-            <span class="exp-company">Cognifyz</span>
-            <span class="exp-duration">1 month</span>
-          </div>
-          <div>
-            <h3 class="exp-role">Frontend Developer Intern</h3>
-            <p class="exp-desc">Built responsive web interfaces with HTML, CSS, and JavaScript. Delivered all tasks within deadlines while honing clean code practices and version control discipline.</p>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -636,8 +637,8 @@
           <p>My inbox is always open. Whether you have a project to discuss, a role to fill, or just want to say hello — I'd love to hear from you.</p>
         </div>
         <div class="contact-cta-block">
-          <a class="btn btn-gold" href="mailto:pravinprabu77@gmail.com">→ Send an Email</a>
-          <a class="btn btn-outline" style="border-color:rgba(255,255,255,.2); color:var(--ivory);" href="https://cal.com/pravin-prabu-8e8xpu" target="_blank" rel="noopener noreferrer">Book a Call</a>
+          <a class="btn btn-gold" href="mailto:contact.pravinp@gmail.com">→ Send an Email</a>
+          <a class="btn btn-outline" style="border-color:rgba(255,255,255,.2); color:var(--ivory);" href="https://cal.com/pravin-p" target="_blank" rel="noopener noreferrer">Book a Call</a>
         </div>
       </div>
     </div>
