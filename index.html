@@ -233,33 +233,21 @@
     .orbit.o2 { animation-duration: 12s; animation-delay: -4s; }
     .orbit.o3 { animation-duration: 15s; animation-delay: -9s; }
     @keyframes orbit-glow { 50% { opacity: .65; } }
-    /* skill badges riding the orbits: behind the emblem on the far half, above it on the near half */
+    /* skill icons riding the orbits: behind the emblem on the far half, above it on the near half */
     .orbit-badges { position: absolute; inset: 0; pointer-events: none; }
     .skill-badge {
       position: absolute; left: 50%; top: 50%; z-index: 1;
-      display: inline-flex; align-items: center; gap: .45em; padding: .42em .85em .42em .5em;
-      font: 500 max(10px, 2.45cqw)/1 'DM Sans', sans-serif; color: #2A2522; white-space: nowrap;
-      background: rgba(255,253,250,.97); border: 1px solid #E6DDD4; border-radius: 999px;
-      box-shadow: inset 0 1px 0 #fff, 0 6px 14px -8px rgba(92,58,44,.4);
+      width: max(26px, 7.2cqw); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+      background: radial-gradient(circle at 35% 30%, #fff, rgba(250,248,245,.94) 70%);
+      border: 1px solid rgba(230,221,212,.9);
+      box-shadow: inset 0 1px 0 #fff, 0 5px 12px -7px rgba(92,58,44,.45);
       pointer-events: auto; cursor: default; user-select: none; will-change: transform, opacity;
       transition: border-color .25s ease, box-shadow .25s ease;
     }
     .skill-badge.front { z-index: 4; }
-    .skill-badge.is-hot { z-index: 5; border-color: var(--g-terra-soft); box-shadow: inset 0 1px 0 #fff, 0 0 0 3px rgba(201,68,53,.09), 0 10px 22px -10px rgba(201,68,53,.5); }
-    .skill-badge img { width: 1.4em; height: 1.4em; object-fit: contain; }
+    .skill-badge.is-hot { z-index: 5; border-color: var(--g-terra-soft); box-shadow: inset 0 1px 0 #fff, 0 0 0 3px rgba(201,68,53,.1), 0 10px 20px -10px rgba(201,68,53,.55); }
+    .skill-badge img { width: 64%; height: 64%; object-fit: contain; pointer-events: none; }
     .skill-badge img.invert { filter: invert(1); }
-    .skill-badge .sb-dot { width: .5em; height: .5em; margin: 0 .15em 0 .3em; border-radius: 50%; background: var(--g-terra); }
-    .skill-badge .sb-short { display: none; }
-    /* small globes: icon-only badges (short name when there's no icon); the full name appears on hover/tap */
-    @container (max-width: 400px) {
-      .skill-badge { padding: .38em; gap: .35em; }
-      .skill-badge:not(.has-icon) { padding: .38em .7em .38em .45em; }
-      .skill-badge .sb-name { display: none; }
-      .skill-badge:not(.has-icon) .sb-short { display: inline; }
-      .skill-badge.is-hot .sb-name { display: inline; }
-      .skill-badge.is-hot .sb-short { display: none; }
-      .skill-badge.has-icon.is-hot { padding-right: .8em; }
-    }
     .globe-emblem {
       position: absolute; z-index: 2; left: 50%; top: 50%; width: 27%; aspect-ratio: 1; translate: -50% -50%;
       border-radius: 50%; display: grid; place-items: center;
@@ -368,7 +356,6 @@
     /* github.png is a white mark: black on light chips, bare white on dark ones */
     .chip img[src$="github.png"] { filter: invert(1); }
     :root[data-theme="dark"] .chip img[src$="github.png"] { filter: none; background: none; padding: 0; }
-    .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
 
     /* ── PROJECTS (stacked cards) ────────────────────────────────── */
     #projects { background: var(--parchment); padding-bottom: 140px; }
@@ -921,8 +908,8 @@
             <span class="chip"><img src="images/css3.png" alt=""> CSS3</span>
             <span class="chip"><img src="images/js.png" alt=""> JavaScript</span>
             <span class="chip"><img src="images/react-js.png" alt=""> React.js</span>
-            <span class="chip"><span class="dot"></span> Next.js</span>
-            <span class="chip"><span class="dot"></span> Tailwind CSS</span>
+            <span class="chip"><img src="images/nextdotjs.svg" alt=""> Next.js</span>
+            <span class="chip"><img src="images/tailwindcss.svg" alt=""> Tailwind CSS</span>
           </div>
         </div>
 
@@ -930,10 +917,10 @@
           <p class="skill-group-label">Backend & Data</p>
           <div class="chips">
             <span class="chip"><img src="images/python.png" alt=""> Python</span>
-            <span class="chip"><span class="dot"></span> Flask</span>
-            <span class="chip"><span class="dot"></span> Node / Express</span>
-            <span class="chip"><img src="images/MongoDB.png" alt=""> MongoDB</span>
-            <span class="chip"><img src="images/Mysql.png" alt=""> MySQL</span>
+            <span class="chip"><img src="images/flask.svg" alt=""> Flask</span>
+            <span class="chip"><img src="images/nodedotjs.svg" alt=""> Node / Express</span>
+            <span class="chip" data-orbit-icon="images/mongodb.svg"><img src="images/MongoDB.png" alt=""> MongoDB</span>
+            <span class="chip" data-orbit-icon="images/mysql.svg"><img src="images/Mysql.png" alt=""> MySQL</span>
             <span class="chip"><img src="images/java.png" alt=""> Java</span>
           </div>
         </div>
@@ -1565,14 +1552,14 @@
         if (reduce) redraw();
       }
       document.querySelectorAll('#skills .chip').forEach((chip, i) => {
-        const name = chip.textContent.trim(), img = chip.querySelector('img'), o = orbits[i % orbits.length];
+        const img = chip.querySelector('img'), o = orbits[i % orbits.length];
+        if (!img) return;
         const el = document.createElement('span');
-        el.className = 'skill-badge' + (img ? ' has-icon' : '');
-        if (img) { const ic = document.createElement('img'); ic.src = img.getAttribute('src'); ic.alt = ''; if (/github/i.test(ic.src)) ic.className = 'invert'; el.appendChild(ic); }
-        else el.insertAdjacentHTML('beforeend', '<i class="sb-dot"></i><span class="sb-short"></span>');
-        el.insertAdjacentHTML('beforeend', '<span class="sb-name"></span>');
-        el.querySelector('.sb-name').textContent = name;
-        if (!img) el.querySelector('.sb-short').textContent = name.split(/[\s/]+/)[0];
+        el.className = 'skill-badge';
+        const ic = document.createElement('img');
+        ic.src = chip.dataset.orbitIcon || img.getAttribute('src');  // compact mark where the chip uses a wordmark ic.alt = ''; ic.draggable = false;
+        if (/github/i.test(ic.src)) ic.className = 'invert';
+        el.appendChild(ic);
         layer.appendChild(el);
         const b = { el, hot: false, front: false };
         o.badges.push(b);
@@ -1606,7 +1593,7 @@
             const u = angleAt((o.ph + o.pos + j / o.badges.length) * L);
             const lx = A * Math.cos(u), ly = B * Math.sin(u), near = (ly / B + 1) / 2;
             const x = lx * o.c - ly * o.s, y = lx * o.s + ly * o.c;
-            const sc = (.88 + .12 * near) * (b.hot ? 1.14 : 1);
+            const sc = (.86 + .14 * near) * (b.hot ? 1.25 : 1);
             b.el.style.transform = `translate(calc(${(x / 5).toFixed(2)}cqw - 50%), calc(${(y / 5).toFixed(2)}cqw - 50%)) scale(${sc.toFixed(3)})`;
             b.el.style.opacity = b.hot ? 1 : (.74 + .26 * near).toFixed(2);
             if (b.front !== ly > 0) { b.front = ly > 0; b.el.classList.toggle('front', b.front); }
