@@ -4,7 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pravin P — Portfolio</title>
-  <meta name="description" content="Pravin P — Full-Stack Developer from R.M.K Engineering College. React, Next.js, Node, Flask, MongoDB and ML-powered web apps."/>
+  <meta name="description" content="Pravin P — Full-Stack Developer from R.M.K Engineering College. React, Next.js, Node, Flask, FastAPI and ML-powered web apps. Co-author of IRRIS (IEEE)."/>
+  <script>
+    // set the theme before first paint to avoid a light flash in dark mode
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111'/%3E%3Ctext x='32' y='45' text-anchor='middle' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='36' fill='%23fff'%3EP%3Ctspan fill='%23E74C3C'%3E.%3C/tspan%3E%3C/text%3E%3C/svg%3E"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -30,6 +40,29 @@
       --shadow-md: 0 6px 32px rgba(0,0,0,.12);
       --shadow-lg: 0 16px 64px rgba(0,0,0,.15);
       --transition: .28s cubic-bezier(.4,0,.2,1);
+      --glass:     rgba(255,255,255,.88);
+      --dark-media: 0%;
+      color-scheme: light;
+    }
+    :root[data-theme="dark"] {
+      --ivory:     #0E0E10;
+      --parchment: #141417;
+      --warm-100:  #26262B;
+      --warm-200:  #3A3A41;
+      --gold:      #E5533F;
+      --gold-light:#FF6B57;
+      --gold-dim:  rgba(229,83,63,.14);
+      --ink:       #F3F1EE;
+      --ink-2:     #DCDAD6;
+      --muted:     #B4B1AC;
+      --muted-2:   #85827D;
+      --white:     #1A1A1E;
+      --shadow-sm: 0 2px 12px rgba(0,0,0,.4);
+      --shadow-md: 0 6px 32px rgba(0,0,0,.5);
+      --shadow-lg: 0 16px 64px rgba(0,0,0,.6);
+      --glass:     rgba(14,14,16,.82);
+      --dark-media: 88%;
+      color-scheme: dark;
     }
 
     /* ── RESET ───────────────────────────────────────────────────── */
@@ -62,7 +95,7 @@
     /* ── NAVIGATION ─────────────────────────────────────────────── */
     header {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,.88);
+      background: var(--glass);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--warm-100);
     }
@@ -196,7 +229,7 @@
     }
     .float-badge {
       position: absolute; z-index: 2;
-      background: rgba(255,255,255,.95); backdrop-filter: blur(8px);
+      background: var(--white); backdrop-filter: blur(8px);
       border: 1px solid var(--warm-100); border-radius: 14px;
       padding: 12px 16px; box-shadow: var(--shadow-md);
       display: flex; align-items: center; gap: 12px;
@@ -317,7 +350,7 @@
 
     .project-media {
       position: relative; padding: 36px;
-      background: var(--tint, #F3F3F3);
+      background: color-mix(in srgb, var(--tint, #F3F3F3), #1A1A1E var(--dark-media));
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
@@ -363,7 +396,8 @@
       color: var(--gold); background: var(--gold-dim);
       padding: 5px 10px; border-radius: 999px;
     }
-    .project-org.new { background: var(--ink); color: #fff; }
+    .project-org.new { background: var(--ink); color: var(--ivory); }
+    .project-org.team { background: transparent; color: var(--muted); border: 1px solid var(--warm-200); }
     .project-title {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(1.8rem, 2.6vw, 2.3rem); font-weight: 600; color: var(--ink);
@@ -400,6 +434,155 @@
     }
     .project-link:hover { color: var(--gold); border-color: var(--gold); }
     .project-link.live { color: var(--gold); border-color: var(--gold); }
+
+    /* ── RESEARCH ────────────────────────────────────────────────── */
+    .paper-feature {
+      display: grid; grid-template-columns: 1fr 1.05fr; gap: 0;
+      background: var(--white); border: 1px solid var(--warm-100);
+      border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md);
+      margin-bottom: 28px;
+    }
+    .paper-body { padding: 44px; display: flex; flex-direction: column; }
+    .paper-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .badge {
+      font-size: .7rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+      padding: 5px 10px; border-radius: 999px; background: var(--gold-dim); color: var(--gold);
+    }
+    .badge.prize { background: #F5B942; color: #3A2A00; }
+    .badge.review { background: transparent; color: var(--muted); border: 1px dashed var(--warm-200); }
+    .paper-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.7rem, 2.6vw, 2.2rem); font-weight: 600; line-height: 1.12; color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .paper-title small { display: block; font-size: .62em; font-style: italic; font-weight: 500; color: var(--muted); margin-top: 6px; }
+    .paper-authors { font-size: .84rem; color: var(--muted-2); margin-bottom: 20px; line-height: 1.6; }
+    .paper-authors b { color: var(--ink); font-weight: 600; }
+    .paper-body p { font-size: .94rem; color: var(--muted); line-height: 1.75; margin-bottom: 18px; }
+    .complexity { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 4px 0 22px; }
+    .complexity div {
+      border: 1px solid var(--warm-100); border-radius: 10px; padding: 12px 14px; background: var(--parchment);
+    }
+    .complexity span { display: block; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 4px; }
+    .complexity b { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-style: italic; color: var(--ink); }
+    .bench { width: 100%; border-collapse: collapse; font-size: .84rem; margin-top: auto; }
+    .bench caption { text-align: left; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 8px; }
+    .bench th, .bench td { padding: 8px 6px; border-bottom: 1px solid var(--warm-100); text-align: left; }
+    .bench th { font-weight: 600; color: var(--muted-2); font-size: .74rem; }
+    .bench td { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .bench .win { color: #1E9E5A; font-weight: 600; }
+    .bench .lose { color: var(--muted-2); }
+
+    /* IRRIS visualizer */
+    .viz {
+      background: #111113; color: #EDEBE7; padding: 36px 36px 30px;
+      display: flex; flex-direction: column; gap: 18px; position: relative;
+    }
+    .viz-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .viz-head h4 { font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: #9A9791; font-weight: 600; }
+    .viz-phase {
+      font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; font-size: .78rem;
+      color: #F5B942; min-height: 1.2em;
+    }
+    .bars {
+      flex: 1; min-height: 220px; max-height: 440px; display: flex; align-items: flex-end; gap: 3px;
+      border-bottom: 1px solid #2A2A2F; padding-bottom: 2px;
+    }
+    .bar {
+      flex: 1; border-radius: 3px 3px 0 0; background: #5C5A56;
+      transition: height .35s cubic-bezier(.2,.7,.2,1), background .3s ease, opacity .3s ease;
+    }
+    .bar.asc  { background: #3DDC84; }
+    .bar.desc { background: #FF6B57; }
+    .bar.rev  { background: #F5B942; }
+    .bar.done { background: #EDEBE7; }
+    .bar.dim  { opacity: .35; }
+    .runs-strip { display: flex; gap: 3px; height: 6px; }
+    .runs-strip i { border-radius: 3px; background: #2A2A2F; transition: background .3s; }
+    .viz-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .74rem; color: #9A9791; }
+    .viz-legend span::before {
+      content: ''; display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px;
+      background: var(--c); vertical-align: -1px;
+    }
+    .viz-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .viz-stats div { background: #1A1A1E; border-radius: 10px; padding: 10px 12px; }
+    .viz-stats span { display: block; font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: #85827D; }
+    .viz-stats b { font-size: 1.2rem; font-variant-numeric: tabular-nums; }
+    .viz-controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .viz-btn {
+      font: inherit; font-size: .84rem; font-weight: 600; cursor: pointer;
+      padding: 10px 18px; border-radius: 999px; border: 1px solid #3A3A41;
+      background: transparent; color: #EDEBE7; transition: all var(--transition);
+    }
+    .viz-btn:hover { border-color: #EDEBE7; }
+    .viz-btn.primary { background: #E5533F; border-color: #E5533F; color: #fff; }
+    .viz-btn.primary:hover { background: #FF6B57; }
+    .viz-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .viz-select {
+      font: inherit; font-size: .82rem; color: #EDEBE7; background: #1A1A1E;
+      border: 1px solid #3A3A41; border-radius: 999px; padding: 9px 14px; cursor: pointer;
+    }
+
+    .papers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .paper-card {
+      background: var(--white); border: 1px solid var(--warm-100); border-radius: var(--radius-lg);
+      padding: 32px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    .paper-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--warm-200); }
+    .paper-card .paper-title { font-size: 1.55rem; }
+    .paper-card p { font-size: .92rem; color: var(--muted); line-height: 1.7; }
+    .paper-card .area {
+      position: absolute; right: 24px; top: 26px; font-size: 2rem; opacity: .16;
+      font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 700; color: var(--ink);
+    }
+
+    /* ── HEADER TOOLS (theme + command palette) ──────────────────── */
+    .icon-btn {
+      width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+      border: 1px solid var(--warm-100); background: var(--white); color: var(--ink-2);
+      cursor: pointer; margin-left: 8px; transition: all var(--transition);
+    }
+    .icon-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .kbd-btn {
+      display: inline-flex; align-items: center; gap: 8px; margin-left: 10px;
+      font: inherit; font-size: .8rem; color: var(--muted); cursor: pointer;
+      border: 1px solid var(--warm-100); background: var(--white);
+      padding: 7px 10px 7px 14px; border-radius: 999px; transition: all var(--transition);
+    }
+    .kbd-btn:hover { border-color: var(--gold); color: var(--ink); }
+    kbd {
+      font-family: ui-monospace, Consolas, monospace; font-size: .7rem;
+      border: 1px solid var(--warm-200); border-bottom-width: 2px; border-radius: 5px;
+      padding: 1px 6px; color: var(--muted); background: var(--parchment);
+    }
+    .icon-btn .moon { display: none; }
+    :root[data-theme="dark"] .icon-btn .sun { display: none; }
+    :root[data-theme="dark"] .icon-btn .moon { display: block; }
+
+    .palette {
+      position: fixed; inset: 0; z-index: 500; display: none;
+      background: rgba(0,0,0,.45); backdrop-filter: blur(4px);
+      align-items: flex-start; justify-content: center; padding: 14vh 16px 16px;
+    }
+    .palette.open { display: flex; animation: fadeIn .15s ease; }
+    @keyframes fadeIn { from { opacity: 0; } }
+    .palette-box {
+      width: min(560px, 100%); background: var(--white); color: var(--ink);
+      border: 1px solid var(--warm-100); border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden;
+    }
+    .palette-box input {
+      width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink);
+      font: inherit; font-size: 1rem; padding: 18px 20px; border-bottom: 1px solid var(--warm-100);
+    }
+    .palette-list { list-style: none; max-height: 340px; overflow-y: auto; padding: 8px; }
+    .palette-list li {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px; cursor: pointer; font-size: .92rem; color: var(--ink-2);
+    }
+    .palette-list li small { color: var(--muted-2); font-size: .76rem; }
+    .palette-list li.sel { background: var(--gold-dim); color: var(--gold); }
+    .palette-foot { display: flex; gap: 16px; padding: 10px 18px; border-top: 1px solid var(--warm-100); font-size: .74rem; color: var(--muted-2); }
 
     /* ── EXPERIENCE ──────────────────────────────────────────────── */
     .experience-list { position: relative; display: flex; flex-direction: column; }
@@ -449,7 +632,7 @@
 
     /* ── FOOTER ──────────────────────────────────────────────────── */
     footer {
-      background: var(--ink); padding: 28px 32px;
+      background: #0B0B0C; padding: 28px 32px;
       border-top: 1px solid rgba(255,255,255,.06);
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 12px; position: relative; z-index: 1;
@@ -464,11 +647,15 @@
       .project-card:nth-child(even) .project-media { order: 0; }
       .float-badge.one { left: -12px; }
       .float-badge.two { right: -12px; }
+      .paper-feature { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 1100px) {
+      .kbd-btn span { display: none; }
     }
     @media (max-width: 900px) {
       .hero-inner { grid-template-columns: 1fr; gap: 72px; }
       .hero-portrait { width: min(80%, 340px); order: -1; }
-      .about-grid, .skills-groups { grid-template-columns: 1fr; }
+      .about-grid, .skills-groups, .papers-grid { grid-template-columns: 1fr; }
       .exp-item { grid-template-columns: 1fr; gap: 6px; }
       .exp-meta { display: flex; gap: 16px; align-items: center; }
       .nav a.navlink:not(.brand) { display: none; }
@@ -487,6 +674,13 @@
       .project-media { padding: 20px; }
       .project-body { padding: 28px 22px; }
       .card { padding: 26px; }
+      .paper-body, .viz { padding: 28px 22px; }
+      .paper-card { padding: 26px 22px; }
+      .bars { min-height: 160px; height: 160px; flex: none; gap: 2px; }
+      .complexity, .viz-stats { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+      .complexity b { font-size: 1.1rem; }
+      .kbd-btn { display: none; }
+      .nav-cta { padding: 9px 14px; margin-left: 8px; }
       .float-badge { padding: 9px 12px; }
       .float-badge b { font-size: 1.35rem; }
       footer { padding: 24px 16px; flex-direction: column; text-align: center; }
@@ -509,8 +703,14 @@
       <a href="#about"      class="navlink">About</a>
       <a href="#skills"     class="navlink">Skills</a>
       <a href="#projects"   class="navlink">Projects</a>
+      <a href="#research"   class="navlink">Research</a>
       <a href="#experience" class="navlink">Experience</a>
       <a href="#contact"    class="navlink">Contact</a>
+      <button class="kbd-btn" id="paletteBtn" type="button" aria-label="Open command palette"><span>Jump to</span> <kbd>Ctrl K</kbd></button>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle dark mode">
+        <svg class="sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
       <a href="Pravin-Resume.pdf" download class="nav-cta">↓ Resume</a>
     </nav>
   </header>
@@ -524,7 +724,7 @@
           Building<br><em class="rotator"><span id="rotWord">elegant</span></em><br>web experiences.
         </h1>
         <p class="hero-sub">
-          I'm <strong>Pravin</strong> — a Full-Stack Developer at R.M.K Engineering College who ships real products: from ML-powered stock signals to a note-sharing platform my classmates use every day.
+          I'm <strong>Pravin</strong> — a Full-Stack Developer and student researcher at R.M.K Engineering College. I ship real products, from a compliance-intelligence dashboard to a note-sharing platform my classmates use every day, and co-authored <strong>IRRIS</strong>, an IEEE-published sorting algorithm.
         </p>
         <div class="hero-actions">
           <a class="btn btn-primary navlink" href="#projects">View Work →</a>
@@ -557,9 +757,9 @@
   <div class="stats">
     <div class="stats-inner">
       <div class="stat"><div class="stat-num">3</div><div class="stat-label">Internships — Infosys, Upstride, Elevance Skills</div></div>
-      <div class="stat"><div class="stat-num">4</div><div class="stat-label">Full-stack products shipped</div></div>
-      <div class="stat"><div class="stat-num">12<sup>+</sup></div><div class="stat-label">Technologies in daily use</div></div>
-      <div class="stat"><div class="stat-num">1</div><div class="stat-label">Live platform for my college</div></div>
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">Full-stack products shipped</div></div>
+      <div class="stat"><div class="stat-num">3</div><div class="stat-label">Research papers — 1 IEEE published, 2 under review</div></div>
+      <div class="stat"><div class="stat-num">1<sup>st</sup></div><div class="stat-label">Prize for IRRIS at the IEEE conference</div></div>
     </div>
   </div>
 
@@ -690,8 +890,39 @@
           </div>
         </article>
 
-        <!-- 02 · InternArea -->
-        <article class="project-card" style="--i:1; --tint:#E9EEFF;">
+        <!-- 02 · RegDiff -->
+        <article class="project-card" style="--i:1; --tint:#E4E8FF;">
+          <div class="project-media">
+            <div class="browser">
+              <div class="browser-bar"><i></i><i></i><i></i><span>regdiff — Compliance Risk Intelligence</span></div>
+              <img src="images/projects/regdiff.webp" alt="RegDiff compliance risk dashboard showing conflicts, affected policies and new obligations" loading="lazy" width="1280" height="755"/>
+            </div>
+          </div>
+          <div class="project-body">
+            <div class="project-meta">
+              <span class="project-num">02</span>
+              <span class="project-org new">New</span>
+              <span class="project-org team">Team project</span>
+            </div>
+            <h3 class="project-title">RegDiff</h3>
+            <p class="project-tagline">A regulatory change analyzer: what changed in the law, and which of our policies does it break?</p>
+            <div class="project-divider"></div>
+            <ul class="project-list">
+              <li>Ingests old and new regulations plus internal policies (PDF, DOCX, TXT), keeping page and section citations.</li>
+              <li>Clause-level diff engine and deontic extraction of obligations, prohibitions, permissions and deadlines.</li>
+              <li>Policy gap analysis with dual-document evidence, a risk dashboard, compliance copilot and exportable audit reports.</li>
+            </ul>
+            <div class="tags">
+              <span class="tag">FastAPI</span><span class="tag">SQLAlchemy</span><span class="tag">Pydantic v2</span><span class="tag">React + TypeScript</span><span class="tag">Tailwind</span><span class="tag">Gemini / OpenAI</span>
+            </div>
+            <div class="project-links">
+              <span class="project-link" style="border:0;color:var(--muted-2);cursor:default">Private repository</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- 03 · InternArea -->
+        <article class="project-card" style="--i:2; --tint:#E9EEFF;">
           <div class="project-media">
             <div class="browser">
               <div class="browser-bar"><i></i><i></i><i></i><span>internarea — Make your dream career a reality</span></div>
@@ -700,7 +931,7 @@
           </div>
           <div class="project-body">
             <div class="project-meta">
-              <span class="project-num">02</span>
+              <span class="project-num">03</span>
               <span class="project-org">Elevance Skills Internship</span>
             </div>
             <h3 class="project-title">InternArea</h3>
@@ -720,8 +951,8 @@
           </div>
         </article>
 
-        <!-- 03 · Stock Signal -->
-        <article class="project-card" style="--i:2; --tint:#E6F4EC;">
+        <!-- 04 · Stock Signal -->
+        <article class="project-card" style="--i:3; --tint:#E6F4EC;">
           <div class="project-media">
             <div class="browser">
               <div class="browser-bar"><i></i><i></i><i></i><span>GET /predict/RELIANCE.NS</span></div>
@@ -755,7 +986,7 @@
           </div>
           <div class="project-body">
             <div class="project-meta">
-              <span class="project-num">03</span>
+              <span class="project-num">04</span>
               <span class="project-org">Infosys Springboard Internship</span>
             </div>
             <h3 class="project-title">Stock Price Predictor</h3>
@@ -775,8 +1006,8 @@
           </div>
         </article>
 
-        <!-- 04 · FinFlow -->
-        <article class="project-card" style="--i:3; --tint:#FFECEA;">
+        <!-- 05 · FinFlow -->
+        <article class="project-card" style="--i:4; --tint:#FFECEA;">
           <div class="project-media">
             <div class="browser">
               <div class="browser-bar"><i></i><i></i><i></i><span>finflow — Transaction Records</span></div>
@@ -785,7 +1016,7 @@
           </div>
           <div class="project-body">
             <div class="project-meta">
-              <span class="project-num">04</span>
+              <span class="project-num">05</span>
               <span class="project-org">Upstride Internship</span>
             </div>
             <h3 class="project-title">FinFlow</h3>
@@ -805,6 +1036,93 @@
           </div>
         </article>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RESEARCH ── -->
+  <section id="research">
+    <div class="container">
+      <div class="reveal">
+        <span class="eyebrow">Research</span>
+        <h2 class="section-title">Papers &amp; publications</h2>
+      </div>
+
+      <!-- IRRIS (published) -->
+      <article class="paper-feature reveal">
+        <div class="paper-body">
+          <div class="paper-badges">
+            <span class="badge">IEEE Conference · Published</span>
+            <span class="badge prize">🏆 First Prize</span>
+          </div>
+          <h3 class="paper-title">IRRIS — Iterative Run Reversal &amp; Integration Sort
+            <small>A formal specification, complexity analysis and empirical evaluation</small></h3>
+          <p class="paper-authors">M. Kanniga Parameshwari, Krish Mehta, Yukesh J, <b>Pravin P</b>, Krishanth G, Sudhir R</p>
+          <p>Real data is rarely random: it's full of stretches that are already ascending or descending. IRRIS is an adaptive, stable sort that detects <em>both</em> kinds of run in a single pass, reverses the descending ones, and merges the runs pairwise in balanced rounds. A <code>hybrid_merge()</code> step checks run boundaries in O(1) and simply concatenates runs that don't overlap, skipping merge work entirely.</p>
+          <p>The paper proves correctness, termination and stability, and benchmarks IRRIS against CPython's Timsort. IRRIS is up to <strong>11× faster</strong> on sorted, reverse-sorted and partially reversed input, while Timsort stays stronger on random data.</p>
+          <div class="complexity">
+            <div><span>Best</span><b>O(n)</b></div>
+            <div><span>Avg / worst</span><b>O(n log n)</b></div>
+            <div><span>Space</span><b>O(n)</b></div>
+          </div>
+          <table class="bench">
+            <caption>Benchmark · N = 100,000 · best of 5 runs</caption>
+            <thead><tr><th>Input</th><th>IRRIS</th><th>Timsort</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Sorted</td><td>0.36 ms</td><td>3.89 ms</td><td class="win">IRRIS 10.7×</td></tr>
+              <tr><td>Reverse-sorted</td><td>0.38 ms</td><td>4.21 ms</td><td class="win">IRRIS 11.0×</td></tr>
+              <tr><td>Partially reversed</td><td>0.62 ms</td><td>4.00 ms</td><td class="win">IRRIS 6.5×</td></tr>
+              <tr><td>Nearly sorted</td><td>32.45 ms</td><td>6.50 ms</td><td class="lose">Timsort 5.0×</td></tr>
+              <tr><td>Random</td><td>84.15 ms</td><td>13.35 ms</td><td class="lose">Timsort 6.3×</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="viz" aria-label="Interactive IRRIS visualizer">
+          <div class="viz-head">
+            <h4>Watch IRRIS sort</h4>
+            <select class="viz-select" id="vizInput" aria-label="Input pattern">
+              <option value="mixed">Mixed runs</option>
+              <option value="partial">Partially reversed</option>
+              <option value="reverse">Reverse-sorted</option>
+              <option value="random">Random</option>
+            </select>
+          </div>
+          <div class="bars" id="bars"></div>
+          <div class="runs-strip" id="runsStrip"></div>
+          <div class="viz-phase" id="vizPhase">Press "Run IRRIS" to start →</div>
+          <div class="viz-legend">
+            <span style="--c:#3DDC84">ascending run</span>
+            <span style="--c:#FF6B57">descending run</span>
+            <span style="--c:#F5B942">reversed</span>
+            <span style="--c:#EDEBE7">merged</span>
+          </div>
+          <div class="viz-stats">
+            <div><span>Runs found</span><b id="stRuns">–</b></div>
+            <div><span>Merge rounds</span><b id="stRounds">–</b></div>
+            <div><span>O(1) skips</span><b id="stSkips">–</b></div>
+          </div>
+          <div class="viz-controls">
+            <button class="viz-btn primary" id="vizRun" type="button">▶ Run IRRIS</button>
+            <button class="viz-btn" id="vizShuffle" type="button">↻ New input</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Under review: overview only -->
+      <div class="papers-grid">
+        <article class="paper-card reveal">
+          <span class="area" aria-hidden="true">CV</span>
+          <div class="paper-badges"><span class="badge review">Under review · Journal</span></div>
+          <h3 class="paper-title">TriFusion — tea leaf disease classification</h3>
+          <p>A two-stage computer-vision pipeline that first locates and crops the diseased region of a tea leaf, enhances it, and then classifies it with an ensemble of modern vision transformers and CNNs, so the model learns from the lesion rather than the background.</p>
+        </article>
+        <article class="paper-card reveal">
+          <span class="area" aria-hidden="true">ML</span>
+          <div class="paper-badges"><span class="badge review">Under review</span></div>
+          <h3 class="paper-title">TOP — tactical decisions during T20 time-outs</h3>
+          <p>A multi-model machine-learning framework that turns a live ball-by-ball scorecard into one ranked, explainable tactical recommendation for a cricket coach during the strategic time-out.</p>
+        </article>
       </div>
     </div>
   </section>
@@ -876,6 +1194,15 @@
     <a href="https://mail.google.com/mail/?view=cm&fs=1&to=pravinprabu77@gmail.com" target="_blank" rel="noopener noreferrer">pravinprabu77@gmail.com</a>
   </footer>
 
+  <!-- ── COMMAND PALETTE ── -->
+  <div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette-box">
+      <input id="palInput" type="text" placeholder="Jump to a section or run an action…" autocomplete="off" aria-label="Search commands"/>
+      <ul class="palette-list" id="palList"></ul>
+      <div class="palette-foot"><span><kbd>↑</kbd> <kbd>↓</kbd> navigate</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div>
+    </div>
+  </div>
+
   <!-- ── SCRIPTS ── -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -922,6 +1249,200 @@
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onScroll);
     onScroll();
+
+    // Theme toggle
+    const root = document.documentElement;
+    function setTheme(t) {
+      root.setAttribute('data-theme', t);
+      try { localStorage.setItem('theme', t); } catch (e) {}
+    }
+    const toggleTheme = () => setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+
+    // ── IRRIS visualizer ──
+    // Mirrors the paper: single-pass ascending/descending run detection,
+    // reversal of descending runs, then balanced pairwise merging where
+    // hybrid_merge() concatenates in O(1) when two runs don't overlap.
+    const N = 40;
+    const barsEl = document.getElementById('bars');
+    const stripEl = document.getElementById('runsStrip');
+    const phaseEl = document.getElementById('vizPhase');
+    const runBtn = document.getElementById('vizRun');
+    const inputSel = document.getElementById('vizInput');
+    const st = { runs: document.getElementById('stRuns'), rounds: document.getElementById('stRounds'), skips: document.getElementById('stSkips') };
+    let arr = [], barEls = [], gen = 0;
+
+    const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+    function makeInput(kind) {
+      const base = Array.from({ length: N }, (_, i) => i + 1);
+      if (kind === 'reverse') return base.reverse();
+      if (kind === 'random') return shuffle(base);
+      if (kind === 'partial') {
+        const a = base.slice();
+        for (let s = 0; s < N; s += 10) { if (Math.random() < .6) a.splice(s, 10, ...a.slice(s, s + 10).reverse()); }
+        return a;
+      }
+      // mixed: random values cut into chunks, each sorted up or down
+      const a = shuffle(base), out = [];
+      for (let i = 0; i < N;) {
+        const len = Math.min(N - i, 4 + (Math.random() * 6 | 0));
+        const chunk = a.slice(i, i + len).sort((x, y) => x - y);
+        out.push(...(Math.random() < .5 ? chunk : chunk.reverse()));
+        i += len;
+      }
+      return out;
+    }
+    function render() {
+      barsEl.innerHTML = ''; barEls = arr.map(v => {
+        const b = document.createElement('div'); b.className = 'bar';
+        b.style.height = (v / N * 100) + '%'; barsEl.appendChild(b); return b;
+      });
+    }
+    function paint(from, to, cls, values) {
+      for (let i = from; i < to; i++) {
+        if (values) barEls[i].style.height = (values[i - from] / N * 100) + '%';
+        barEls[i].className = 'bar ' + (cls || '');
+      }
+    }
+    function drawStrip(runs) {
+      stripEl.innerHTML = '';
+      runs.forEach((r, k) => {
+        const i = document.createElement('i');
+        i.style.flex = r.end - r.start;
+        i.style.background = ['#E5533F', '#F5B942', '#3DDC84', '#6C8CFF'][k % 4];
+        stripEl.appendChild(i);
+      });
+    }
+    function detectRuns(a) {
+      const runs = []; let i = 0;
+      while (i < a.length) {
+        let j = i + 1;
+        if (j < a.length && a[j] < a[i]) { while (j < a.length && a[j] < a[j - 1]) j++; runs.push({ start: i, end: j, desc: true }); }
+        else { while (j < a.length && a[j] >= a[j - 1]) j++; runs.push({ start: i, end: j, desc: false }); }
+        i = j;
+      }
+      return runs;
+    }
+    function merge(L, R) {
+      const out = []; let i = 0, j = 0;
+      while (i < L.length && j < R.length) out.push(R[j] < L[i] ? R[j++] : L[i++]);
+      return out.concat(L.slice(i), R.slice(j));
+    }
+    function reset() {
+      gen++; arr = makeInput(inputSel.value); render(); stripEl.innerHTML = '';
+      st.runs.textContent = st.rounds.textContent = st.skips.textContent = '–';
+      phaseEl.textContent = 'Press "Run IRRIS" to start →'; runBtn.disabled = false;
+    }
+    async function runIRRIS() {
+      const my = ++gen; runBtn.disabled = true;
+      const fast = reduce ? 0 : 1;
+      const wait = ms => new Promise(r => setTimeout(r, ms * fast));
+      const alive = () => my === gen;
+      render();
+      let skips = 0, rounds = 0;
+
+      phaseEl.textContent = '1 · detect ascending & descending runs (single pass)';
+      let runs = detectRuns(arr);
+      for (const r of runs) { if (!alive()) return; paint(r.start, r.end, r.desc ? 'desc' : 'asc'); await wait(140); }
+      st.runs.textContent = runs.length; drawStrip(runs);
+      await wait(700);
+
+      phaseEl.textContent = '2 · reverse descending runs to normalise orientation';
+      for (const r of runs) {
+        if (!alive()) return;
+        if (r.desc) {
+          const seg = arr.slice(r.start, r.end).reverse();
+          arr.splice(r.start, seg.length, ...seg);
+          paint(r.start, r.end, 'rev', seg); await wait(220);
+        }
+      }
+      await wait(600);
+
+      while (runs.length > 1) {
+        rounds++; st.rounds.textContent = rounds;
+        phaseEl.textContent = `3 · balanced pairwise merge — round ${rounds}: ${runs.length} → ${Math.ceil(runs.length / 2)} runs`;
+        const next = [];
+        for (let k = 0; k < runs.length; k += 2) {
+          if (!alive()) return;
+          const L = runs[k], R = runs[k + 1];
+          if (!R) { next.push(L); continue; }
+          const left = arr.slice(L.start, L.end), right = arr.slice(R.start, R.end);
+          let merged;
+          if (left[left.length - 1] <= right[0]) { merged = left.concat(right); skips++; }
+          else if (right[right.length - 1] <= left[0]) { merged = right.concat(left); skips++; }
+          else merged = merge(left, right);
+          st.skips.textContent = skips;
+          barEls.forEach((b, i) => b.classList.toggle('dim', i < L.start || i >= R.end));
+          arr.splice(L.start, merged.length, ...merged);
+          paint(L.start, R.end, 'rev', merged);
+          await wait(260);
+          next.push({ start: L.start, end: R.end });
+        }
+        barEls.forEach(b => b.classList.remove('dim'));
+        runs = next; drawStrip(runs);
+        await wait(500);
+      }
+      if (!alive()) return;
+      st.rounds.textContent = rounds; st.skips.textContent = skips;
+      paint(0, N, 'done');
+      const pl = (n, w) => `${n} ${w}${n == 1 ? '' : 's'}`;
+      phaseEl.textContent = `✓ sorted — ${pl(st.runs.textContent, 'run')}, ${pl(rounds, 'merge round')}, ${pl(skips, 'O(1) skip')}`;
+      runBtn.disabled = false; runBtn.textContent = '▶ Run again';
+    }
+    runBtn.addEventListener('click', () => { if (runBtn.textContent.includes('again')) { arr = makeInput(inputSel.value); } runIRRIS(); });
+    document.getElementById('vizShuffle').addEventListener('click', () => { runBtn.textContent = '▶ Run IRRIS'; reset(); });
+    inputSel.addEventListener('change', () => { runBtn.textContent = '▶ Run IRRIS'; reset(); });
+    reset();
+
+    // ── Command palette (Ctrl/⌘ + K) ──
+    const go = id => () => document.querySelector(id).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    const open = url => () => window.open(url, '_blank', 'noopener');
+    const commands = [
+      { label: 'About', hint: 'Section', run: go('#about') },
+      { label: 'Skills', hint: 'Section', run: go('#skills') },
+      { label: 'Projects', hint: 'Section', run: go('#projects') },
+      { label: 'Research — IRRIS', hint: 'Section', run: go('#research') },
+      { label: 'Watch IRRIS sort live', hint: 'Demo', run: () => { go('#research')(); setTimeout(() => { runBtn.textContent = '▶ Run IRRIS'; reset(); runIRRIS(); }, 600); } },
+      { label: 'Experience', hint: 'Section', run: go('#experience') },
+      { label: 'Contact', hint: 'Section', run: go('#contact') },
+      { label: 'Toggle dark mode', hint: 'Action', run: toggleTheme },
+      { label: 'Download résumé', hint: 'PDF', run: () => { const a = document.createElement('a'); a.href = 'Pravin-Resume.pdf'; a.download = ''; a.click(); } },
+      { label: 'Email Pravin', hint: 'Gmail', run: open('https://mail.google.com/mail/?view=cm&fs=1&to=contact.pravinp@gmail.com') },
+      { label: 'Note Share — live site', hint: 'Link', run: open('https://rmkec-note-sharing.web.app') },
+      { label: 'GitHub', hint: 'Link', run: open('https://github.com/Pravinprabu') },
+      { label: 'LinkedIn', hint: 'Link', run: open('https://www.linkedin.com/in/pravin-p-84092832a/') },
+    ];
+    const pal = document.getElementById('palette'), palInput = document.getElementById('palInput'), palList = document.getElementById('palList');
+    let filtered = commands, sel = 0;
+    function drawPalette() {
+      const q = palInput.value.trim().toLowerCase();
+      filtered = commands.filter(c => c.label.toLowerCase().includes(q));
+      sel = Math.min(sel, Math.max(filtered.length - 1, 0));
+      palList.innerHTML = filtered.length ? '' : '<li><small>No matches</small></li>';
+      filtered.forEach((c, i) => {
+        const li = document.createElement('li');
+        li.className = i === sel ? 'sel' : '';
+        li.innerHTML = `<span></span><small>${c.hint}</small>`;
+        li.firstChild.textContent = c.label;
+        li.addEventListener('mousemove', () => { if (sel !== i) { sel = i; drawPalette(); } });
+        li.addEventListener('click', () => exec(i));
+        palList.appendChild(li);
+      });
+    }
+    function openPalette() { pal.classList.add('open'); palInput.value = ''; sel = 0; drawPalette(); palInput.focus(); }
+    function closePalette() { pal.classList.remove('open'); }
+    function exec(i) { const c = filtered[i]; closePalette(); if (c) c.run(); }
+    document.getElementById('paletteBtn').addEventListener('click', openPalette);
+    pal.addEventListener('click', e => { if (e.target === pal) closePalette(); });
+    palInput.addEventListener('input', () => { sel = 0; drawPalette(); });
+    addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); pal.classList.contains('open') ? closePalette() : openPalette(); return; }
+      if (!pal.classList.contains('open')) return;
+      if (e.key === 'Escape') closePalette();
+      else if (e.key === 'ArrowDown') { e.preventDefault(); sel = (sel + 1) % Math.max(filtered.length, 1); drawPalette(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); sel = (sel - 1 + filtered.length) % Math.max(filtered.length, 1); drawPalette(); }
+      else if (e.key === 'Enter') { e.preventDefault(); exec(sel); }
+    });
   </script>
 </body>
 </html>
