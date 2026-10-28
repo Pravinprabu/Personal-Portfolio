@@ -164,7 +164,7 @@
 
     /* ── HERO ────────────────────────────────────────────────────── */
     #home {
-      min-height: calc(100svh - 64px); display: flex; align-items: center;
+      min-height: calc(100svh - 64px); display: flex; align-items: center; overflow-x: clip;
       padding: 72px 32px 88px;
       background:
         radial-gradient(900px 500px at 85% 20%, rgba(192,57,43,.07), transparent 60%),
@@ -223,7 +223,8 @@
       --g-emblem-border: #D9CFC4; --g-shadow: rgba(0,0,0,.6); --g-hi: .05; --g-limb: .16;
     }
     .globe-layer { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-    .globe-front { pointer-events: none; }
+    .globe-back { z-index: 0; }
+    .globe-front { z-index: 3; pointer-events: none; }
     .wire { fill: none; stroke-linecap: round; vector-effect: non-scaling-stroke; }
     .wire.front { stroke: var(--g-wire-front); stroke-width: 1; }
     .wire.back { stroke: var(--g-wire-back); stroke-width: .8; }
@@ -232,9 +233,35 @@
     .orbit.o2 { animation-duration: 12s; animation-delay: -4s; }
     .orbit.o3 { animation-duration: 15s; animation-delay: -9s; }
     @keyframes orbit-glow { 50% { opacity: .65; } }
-    .sat { fill: var(--g-terra); }
+    /* skill badges riding the orbits: behind the emblem on the far half, above it on the near half */
+    .orbit-badges { position: absolute; inset: 0; pointer-events: none; }
+    .skill-badge {
+      position: absolute; left: 50%; top: 50%; z-index: 1;
+      display: inline-flex; align-items: center; gap: .45em; padding: .42em .85em .42em .5em;
+      font: 500 max(10px, 2.45cqw)/1 'DM Sans', sans-serif; color: #2A2522; white-space: nowrap;
+      background: rgba(255,253,250,.97); border: 1px solid #E6DDD4; border-radius: 999px;
+      box-shadow: inset 0 1px 0 #fff, 0 6px 14px -8px rgba(92,58,44,.4);
+      pointer-events: auto; cursor: default; user-select: none; will-change: transform, opacity;
+      transition: border-color .25s ease, box-shadow .25s ease;
+    }
+    .skill-badge.front { z-index: 4; }
+    .skill-badge.is-hot { z-index: 5; border-color: var(--g-terra-soft); box-shadow: inset 0 1px 0 #fff, 0 0 0 3px rgba(201,68,53,.09), 0 10px 22px -10px rgba(201,68,53,.5); }
+    .skill-badge img { width: 1.4em; height: 1.4em; object-fit: contain; }
+    .skill-badge img.invert { filter: invert(1); }
+    .skill-badge .sb-dot { width: .5em; height: .5em; margin: 0 .15em 0 .3em; border-radius: 50%; background: var(--g-terra); }
+    .skill-badge .sb-short { display: none; }
+    /* small globes: icon-only badges (short name when there's no icon); the full name appears on hover/tap */
+    @container (max-width: 400px) {
+      .skill-badge { padding: .38em; gap: .35em; }
+      .skill-badge:not(.has-icon) { padding: .38em .7em .38em .45em; }
+      .skill-badge .sb-name { display: none; }
+      .skill-badge:not(.has-icon) .sb-short { display: inline; }
+      .skill-badge.is-hot .sb-name { display: inline; }
+      .skill-badge.is-hot .sb-short { display: none; }
+      .skill-badge.has-icon.is-hot { padding-right: .8em; }
+    }
     .globe-emblem {
-      position: absolute; left: 50%; top: 50%; width: 27%; aspect-ratio: 1; translate: -50% -50%;
+      position: absolute; z-index: 2; left: 50%; top: 50%; width: 27%; aspect-ratio: 1; translate: -50% -50%;
       border-radius: 50%; display: grid; place-items: center;
       background: radial-gradient(circle at 36% 30%, #FFFFFF 0%, var(--g-ivory) 55%, color-mix(in srgb, var(--g-ivory) 88%, var(--g-gray)) 100%);
       border: 1px solid var(--g-emblem-border);
@@ -825,7 +852,6 @@
           <ellipse class="orbit o1" rx="228" ry="86" stroke="url(#og1)"/>
           <ellipse class="orbit o2" rx="228" ry="86" stroke="url(#og2)" transform="rotate(45)"/>
           <ellipse class="orbit o3" rx="228" ry="86" stroke="url(#og3)" transform="rotate(-45)"/>
-          <g id="satBack"></g>
         </svg>
         <div class="globe-emblem"><span>P</span></div>
         <svg class="globe-layer globe-front" viewBox="-250 -250 500 500" aria-hidden="true">
@@ -833,8 +859,8 @@
           <path class="orbit o1" d="M228 0A228 86 0 0 1 -228 0" stroke="url(#ogf1)"/>
           <path class="orbit o2" d="M228 0A228 86 0 0 1 -228 0" stroke="url(#ogf2)" transform="rotate(45)"/>
           <path class="orbit o3" d="M228 0A228 86 0 0 1 -228 0" stroke="url(#ogf3)" transform="rotate(-45)"/>
-          <g id="satFront"></g>
         </svg>
+        <div class="orbit-badges" id="orbitBadges" aria-hidden="true"></div>
       </div>
     </div>
   </section>
@@ -1491,12 +1517,12 @@
     // ── Hero globe ──
     // A wireframe sphere (seen from slightly above) turns slowly behind the
     // monogram; meridians are re-projected each frame and split into near and
-    // far strokes. One satellite rides each orbit, swapping between the back
-    // and front SVG layers as it passes behind or in front of the emblem.
+    // far strokes. The skill chips from #skills ride the three orbits as
+    // badges, stacking behind the emblem on the far half and over it on the near half.
     (function heroGlobe() {
       const root = document.querySelector('.hero-globe');
       const wireF = document.getElementById('wireFront'), wireB = document.getElementById('wireBack');
-      const NS = 'http://www.w3.org/2000/svg', R = 150, TILT = .38, ct = Math.cos(TILT), st = Math.sin(TILT);
+      const R = 150, TILT = .38, ct = Math.cos(TILT), st = Math.sin(TILT), TAU = 2 * Math.PI;
       const A = 228, B = 86;
       // sphere point (x right, y up, z toward viewer) tilted about the x axis -> [screenX, screenY, depth]
       const proj = (x, y, z) => [x, -(y * ct - z * st), y * st + z * ct];
@@ -1512,18 +1538,60 @@
       const lat = { f: '', b: '' };
       for (const deg of [-60, -30, 0, 30, 60]) {
         const phi = deg * Math.PI / 180, pts = [];
-        for (let i = 0; i <= 72; i++) { const l = i / 72 * 2 * Math.PI; pts.push(proj(R * Math.cos(phi) * Math.cos(l), R * Math.sin(phi), R * Math.cos(phi) * Math.sin(l))); }
+        for (let i = 0; i <= 72; i++) { const l = i / 72 * TAU; pts.push(proj(R * Math.cos(phi) * Math.cos(l), R * Math.sin(phi), R * Math.cos(phi) * Math.sin(l))); }
         trace(pts, lat);
       }
-      const orbits = [{ a: 0, period: 40, ph: .5 }, { a: 45, period: 54, ph: 2.7 }, { a: -45, period: 68, ph: 4.6 }];
-      for (const o of orbits) {
-        o.back = document.createElementNS(NS, 'circle'); o.front = document.createElementNS(NS, 'circle');
-        o.back.setAttribute('class', 'sat'); o.front.setAttribute('class', 'sat');
-        document.getElementById('satBack').appendChild(o.back); document.getElementById('satFront').appendChild(o.front);
-        o.c = Math.cos(o.a * Math.PI / 180); o.s = Math.sin(o.a * Math.PI / 180);
+
+      // arc-length table for the orbit ellipse, so badges stay evenly spaced and move at a constant speed
+      const N = 720, arc = [0];
+      for (let i = 1; i <= N; i++) {
+        const u0 = (i - 1) / N * TAU, u1 = i / N * TAU;
+        arc.push(arc[i - 1] + Math.hypot(A * (Math.cos(u1) - Math.cos(u0)), B * (Math.sin(u1) - Math.sin(u0))));
       }
-      function draw(t) {
-        const spin = t / 1000 * 2 * Math.PI / 90, acc = { f: lat.f, b: lat.b };
+      const L = arc[N];
+      const angleAt = d => {
+        d = ((d % L) + L) % L; let lo = 0, hi = N;
+        while (hi - lo > 1) { const m = (lo + hi) >> 1; if (arc[m] <= d) lo = m; else hi = m; }
+        return (lo + (d - arc[lo]) / (arc[hi] - arc[lo])) / N * TAU;
+      };
+      // same angles as the SVG ellipses; period = seconds per lap
+      const orbits = [{ a: 0, period: 80, dir: 1, ph: .04 }, { a: 45, period: 96, dir: -1, ph: .37 }, { a: -45, period: 112, dir: 1, ph: .71 }]
+        .map(o => ({ ...o, c: Math.cos(o.a * Math.PI / 180), s: Math.sin(o.a * Math.PI / 180), k: 1, pos: 0, badges: [] }));
+
+      const layer = document.getElementById('orbitBadges');
+      let redraw = () => {};
+      function setHot(b, on) {
+        b.hot = on; b.el.classList.toggle('is-hot', on);
+        if (reduce) redraw();
+      }
+      document.querySelectorAll('#skills .chip').forEach((chip, i) => {
+        const name = chip.textContent.trim(), img = chip.querySelector('img'), o = orbits[i % orbits.length];
+        const el = document.createElement('span');
+        el.className = 'skill-badge' + (img ? ' has-icon' : '');
+        if (img) { const ic = document.createElement('img'); ic.src = img.getAttribute('src'); ic.alt = ''; if (/github/i.test(ic.src)) ic.className = 'invert'; el.appendChild(ic); }
+        else el.insertAdjacentHTML('beforeend', '<i class="sb-dot"></i><span class="sb-short"></span>');
+        el.insertAdjacentHTML('beforeend', '<span class="sb-name"></span>');
+        el.querySelector('.sb-name').textContent = name;
+        if (!img) el.querySelector('.sb-short').textContent = name.split(/[\s/]+/)[0];
+        layer.appendChild(el);
+        const b = { el, hot: false, front: false };
+        o.badges.push(b);
+        el.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') setHot(b, true); });
+        el.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') setHot(b, false); });
+        el.addEventListener('pointerup', e => {
+          if (e.pointerType === 'mouse') return;
+          const on = !b.hot;
+          orbits.forEach(q => q.badges.forEach(x => x.hot && setHot(x, false)));
+          setHot(b, on);
+        });
+      });
+      // a tap anywhere else closes a badge opened by touch
+      document.addEventListener('pointerdown', e => {
+        if (e.pointerType !== 'mouse' && !e.target.closest('.skill-badge')) orbits.forEach(q => q.badges.forEach(x => x.hot && setHot(x, false)));
+      });
+
+      function draw(t, dt) {
+        const spin = t / 1000 * TAU / 90, acc = { f: lat.f, b: lat.b };
         for (let m = 0; m < 12; m++) {
           const th = m * Math.PI / 6 + spin, pts = [];
           for (let i = 0; i <= 24; i++) { const l = -Math.PI / 2 + i / 24 * Math.PI; pts.push(proj(R * Math.cos(l) * Math.cos(th), R * Math.sin(l), R * Math.cos(l) * Math.sin(th))); }
@@ -1531,17 +1599,25 @@
         }
         wireF.setAttribute('d', acc.f); wireB.setAttribute('d', acc.b);
         for (const o of orbits) {
-          const u = o.ph + t / 1000 / o.period * 2 * Math.PI, lx = A * Math.cos(u), ly = B * Math.sin(u), near = (Math.sin(u) + 1) / 2;
-          const x = f(lx * o.c - ly * o.s), y = f(lx * o.s + ly * o.c), r = f(2.6 + near * 2.2), op = (.35 + near * .65).toFixed(2);
-          for (const el of [o.back, o.front]) { el.setAttribute('cx', x); el.setAttribute('cy', y); el.setAttribute('r', r); }
-          o.front.style.opacity = ly > 0 ? op : 0; o.back.style.opacity = ly > 0 ? 0 : op;
+          // an orbit glides to a stop while one of its badges is hovered, so spacing never changes
+          o.k += ((o.badges.some(b => b.hot) ? 0 : 1) - o.k) * (1 - Math.exp(-6 * dt));
+          o.pos += dt * o.k * o.dir / o.period;
+          o.badges.forEach((b, j) => {
+            const u = angleAt((o.ph + o.pos + j / o.badges.length) * L);
+            const lx = A * Math.cos(u), ly = B * Math.sin(u), near = (ly / B + 1) / 2;
+            const x = lx * o.c - ly * o.s, y = lx * o.s + ly * o.c;
+            const sc = (.88 + .12 * near) * (b.hot ? 1.14 : 1);
+            b.el.style.transform = `translate(calc(${(x / 5).toFixed(2)}cqw - 50%), calc(${(y / 5).toFixed(2)}cqw - 50%)) scale(${sc.toFixed(3)})`;
+            b.el.style.opacity = b.hot ? 1 : (.74 + .26 * near).toFixed(2);
+            if (b.front !== ly > 0) { b.front = ly > 0; b.el.classList.toggle('front', b.front); }
+          });
         }
       }
-      let raf = 0, visible = true;
-      const tick = now => { draw(now); raf = requestAnimationFrame(tick); };
-      const resume = () => { cancelAnimationFrame(raf); if (visible && !document.hidden) raf = requestAnimationFrame(tick); };
-      draw(0);
-      if (reduce) return;
+      let raf = 0, visible = true, last = 0;
+      const tick = now => { draw(now, Math.min((now - last) / 1000, .05)); last = now; raf = requestAnimationFrame(tick); };
+      const resume = () => { cancelAnimationFrame(raf); if (visible && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(tick); } };
+      draw(0, 0);
+      if (reduce) { redraw = () => draw(0, 0); return; }
       new IntersectionObserver(([en]) => { visible = en.isIntersecting; resume(); }).observe(root);
       document.addEventListener('visibilitychange', resume);
     })();
