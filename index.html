@@ -208,55 +208,48 @@
     .hero-sub strong { color: var(--ink); font-weight: 600; }
     .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 40px; }
 
-    /* Portrait */
-    .hero-portrait { position: relative; justify-self: center; width: min(100%, 400px); }
-    .portrait-frame {
-      position: relative; z-index: 1;
-      aspect-ratio: 4 / 5; border-radius: 200px 200px var(--radius-xl) var(--radius-xl);
-      overflow: hidden; background: var(--parchment);
-      box-shadow: var(--shadow-lg);
+    /* Orbital globe: SVG wireframe sphere + three orbits around a "P" monogram.
+       Two SVG layers sandwich the emblem so the front halves of the orbits pass over it. */
+    .hero-globe {
+      position: relative; justify-self: center; width: min(100%, 480px); aspect-ratio: 1;
+      container-type: inline-size;
+      --g-ivory: #FAF8F5; --g-terra: #C94435; --g-terra-soft: #DCA69A; --g-gray: #D8D1CB; --g-gray-ink: #B9AEA4;
+      --g-wire-front: rgba(201,68,53,.28); --g-wire-back: rgba(170,155,143,.22);
+      --g-emblem-border: #E6DDD4; --g-shadow: rgba(92,58,44,.26); --g-hi: .6; --g-limb: .08;
     }
-    .portrait-frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transition: opacity .6s ease; }
-    /* 3D portrait: depth-displaced WebGL mesh; the <img> stays as the no-WebGL fallback */
-    .portrait-3d { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; }
-    .portrait-3d canvas { display: block; width: 100% !important; height: 100% !important; }
-    .portrait-frame.is-3d {
-      background:
-        radial-gradient(70% 55% at 50% 38%, rgba(255,255,255,.95), transparent 70%),
-        linear-gradient(165deg, #FBE3DD 0%, #F3EEEC 55%, #E9E9EE 100%);
+    :root[data-theme="dark"] .hero-globe {
+      --g-ivory: #F4EFE8; --g-terra-soft: #E09A8B; --g-gray: #8E857D; --g-gray-ink: #A39990;
+      --g-wire-front: rgba(240,120,100,.45); --g-wire-back: rgba(190,180,170,.16);
+      --g-emblem-border: #D9CFC4; --g-shadow: rgba(0,0,0,.6); --g-hi: .05; --g-limb: .16;
     }
-    :root[data-theme="dark"] .portrait-frame.is-3d {
-      background:
-        radial-gradient(70% 55% at 50% 38%, rgba(240,96,75,.22), transparent 70%),
-        linear-gradient(165deg, #2B1D1B 0%, #1E1C21 60%, #17171B 100%);
+    .globe-layer { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .globe-front { pointer-events: none; }
+    .wire { fill: none; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+    .wire.front { stroke: var(--g-wire-front); stroke-width: 1; }
+    .wire.back { stroke: var(--g-wire-back); stroke-width: .8; }
+    .globe-rim { fill: none; stroke: var(--g-terra-soft); stroke-opacity: .55; stroke-width: 1; vector-effect: non-scaling-stroke; }
+    .orbit { fill: none; stroke-width: 1.15; vector-effect: non-scaling-stroke; animation: orbit-glow 9s ease-in-out infinite; }
+    .orbit.o2 { animation-duration: 12s; animation-delay: -4s; }
+    .orbit.o3 { animation-duration: 15s; animation-delay: -9s; }
+    @keyframes orbit-glow { 50% { opacity: .65; } }
+    .sat { fill: var(--g-terra); }
+    .globe-emblem {
+      position: absolute; left: 50%; top: 50%; width: 27%; aspect-ratio: 1; translate: -50% -50%;
+      border-radius: 50%; display: grid; place-items: center;
+      background: radial-gradient(circle at 36% 30%, #FFFFFF 0%, var(--g-ivory) 55%, color-mix(in srgb, var(--g-ivory) 88%, var(--g-gray)) 100%);
+      border: 1px solid var(--g-emblem-border);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.9),
+        inset 0 -8px 16px rgba(201,68,53,.05),
+        0 0 0 6px color-mix(in srgb, var(--g-ivory) 55%, transparent),
+        0 18px 34px -14px var(--g-shadow);
+      animation: emblem-breathe 8s ease-in-out infinite;
     }
-    .portrait-frame.is-3d img { opacity: 0; }
-    .portrait-frame.is-3d .portrait-3d { opacity: 1; }
-    .portrait-ring {
-      position: absolute; inset: -18px; z-index: 0;
-      border: 1.5px dashed var(--warm-200);
-      border-radius: 220px 220px 28px 28px;
+    .globe-emblem span {
+      font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 17.5cqw; line-height: 1;
+      color: var(--g-terra); translate: .03em .02em; user-select: none;
     }
-    .portrait-accent {
-      position: absolute; z-index: 0; right: -26px; bottom: -26px;
-      width: 62%; height: 46%; border-radius: var(--radius-xl);
-      background: var(--gold); opacity: .9;
-    }
-    .float-badge {
-      position: absolute; z-index: 2;
-      background: var(--white); backdrop-filter: blur(8px);
-      border: 1px solid var(--warm-100); border-radius: 14px;
-      padding: 12px 16px; box-shadow: var(--shadow-md);
-      display: flex; align-items: center; gap: 12px;
-      animation: float 6s ease-in-out infinite;
-    }
-    .float-badge b {
-      font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; line-height: 1; color: var(--gold);
-    }
-    .float-badge small { font-size: .76rem; color: var(--muted); line-height: 1.35; display: block; }
-    .float-badge.one { left: -44px; top: 22%; }
-    .float-badge.two { right: -36px; top: 74%; animation-delay: -3s; }
-    @keyframes float { 50% { transform: translateY(-10px); } }
+    @keyframes emblem-breathe { 50% { scale: 1.025; } }
 
     /* ── BUTTONS ─────────────────────────────────────────────────── */
     .btn {
@@ -710,16 +703,14 @@
     @media (max-width: 1000px) {
       .project-card, .project-card:nth-child(even) { grid-template-columns: 1fr; min-height: 0; }
       .project-card:nth-child(even) .project-media { order: 0; }
-      .float-badge.one { left: -12px; }
-      .float-badge.two { right: -12px; }
       .paper-feature { grid-template-columns: 1fr; }
     }
     @media (max-width: 1100px) {
       .kbd-btn span { display: none; }
     }
     @media (max-width: 900px) {
-      .hero-inner { grid-template-columns: 1fr; gap: 72px; }
-      .hero-portrait { width: min(80%, 340px); order: -1; }
+      .hero-inner { grid-template-columns: 1fr; gap: 28px; }
+      .hero-globe { width: min(78%, 380px); order: -1; }
       .about-grid, .skills-groups, .papers-grid { grid-template-columns: 1fr; }
       .exp-item { grid-template-columns: 1fr; gap: 6px; }
       .exp-meta { display: flex; gap: 16px; align-items: center; }
@@ -746,8 +737,7 @@
       .complexity b { font-size: 1.1rem; }
       .kbd-btn { display: none; }
       .nav-cta { padding: 9px 14px; margin-left: 8px; }
-      .float-badge { padding: 9px 12px; }
-      .float-badge b { font-size: 1.35rem; }
+      .hero-globe { width: min(88%, 320px); }
       footer { padding: 24px 16px; flex-direction: column; text-align: center; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -807,15 +797,44 @@
         </div>
       </div>
 
-      <div class="hero-portrait reveal">
-        <div class="portrait-accent" aria-hidden="true"></div>
-        <div class="portrait-ring" aria-hidden="true"></div>
-        <div class="portrait-frame" id="portraitFrame">
-          <img src="images/profile.webp" alt="Portrait of Pravin P" width="800" height="1000" fetchpriority="high"/>
-          <div class="portrait-3d" id="portrait3d" aria-hidden="true"></div>
-        </div>
-        <div class="float-badge one"><b>3</b><small>Internships<br>completed</small></div>
-        <div class="float-badge two"><b>B.Tech</b><small>Information<br>Technology</small></div>
+      <div class="hero-globe reveal" role="img" aria-label="Pravin's monogram: the letter P inside an orbital globe">
+        <svg class="globe-layer globe-back" viewBox="-250 -250 500 500" aria-hidden="true">
+          <defs>
+            <radialGradient id="globeShade" cx="38%" cy="32%" r="72%">
+              <stop offset="0" style="stop-color:#fff;stop-opacity:var(--g-hi)"/>
+              <stop offset=".62" style="stop-color:#DCA69A;stop-opacity:.03"/>
+              <stop offset="1" style="stop-color:#C94435;stop-opacity:var(--g-limb)"/>
+            </radialGradient>
+            <radialGradient id="globeGround">
+              <stop offset="0" stop-color="#5C3A2C" stop-opacity=".16"/>
+              <stop offset="1" stop-color="#5C3A2C" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="og1" gradientUnits="userSpaceOnUse" x1="0" y1="-86" x2="0" y2="86"><stop offset="0" style="stop-color:var(--g-terra)" stop-opacity=".22"/><stop offset="1" style="stop-color:var(--g-terra)" stop-opacity=".7"/></linearGradient>
+            <linearGradient id="og2" gradientUnits="userSpaceOnUse" x1="0" y1="-86" x2="0" y2="86"><stop offset="0" style="stop-color:var(--g-gray-ink)" stop-opacity=".3"/><stop offset="1" style="stop-color:var(--g-gray-ink)" stop-opacity=".85"/></linearGradient>
+            <linearGradient id="og3" gradientUnits="userSpaceOnUse" x1="0" y1="-86" x2="0" y2="86"><stop offset="0" style="stop-color:var(--g-terra-soft)" stop-opacity=".3"/><stop offset="1" style="stop-color:var(--g-terra-soft)" stop-opacity=".95"/></linearGradient>
+            <linearGradient id="ogf1" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="86"><stop offset="0" style="stop-color:var(--g-terra)" stop-opacity="0"/><stop offset="1" style="stop-color:var(--g-terra)" stop-opacity=".55"/></linearGradient>
+            <linearGradient id="ogf2" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="86"><stop offset="0" style="stop-color:var(--g-gray-ink)" stop-opacity="0"/><stop offset="1" style="stop-color:var(--g-gray-ink)" stop-opacity=".6"/></linearGradient>
+            <linearGradient id="ogf3" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="86"><stop offset="0" style="stop-color:var(--g-terra-soft)" stop-opacity="0"/><stop offset="1" style="stop-color:var(--g-terra-soft)" stop-opacity=".7"/></linearGradient>
+          </defs>
+          <ellipse cx="0" cy="214" rx="120" ry="11" fill="url(#globeGround)"/>
+          <circle r="150" fill="url(#globeShade)"/>
+          <path class="wire back" id="wireBack"/>
+          <path class="wire front" id="wireFront"/>
+          <circle class="globe-rim" r="150"/>
+          <!-- full orbits; the far (upper) half fades out behind the sphere -->
+          <ellipse class="orbit o1" rx="228" ry="86" stroke="url(#og1)"/>
+          <ellipse class="orbit o2" rx="228" ry="86" stroke="url(#og2)" transform="rotate(45)"/>
+          <ellipse class="orbit o3" rx="228" ry="86" stroke="url(#og3)" transform="rotate(-45)"/>
+          <g id="satBack"></g>
+        </svg>
+        <div class="globe-emblem"><span>P</span></div>
+        <svg class="globe-layer globe-front" viewBox="-250 -250 500 500" aria-hidden="true">
+          <!-- near halves, drawn over the emblem -->
+          <path class="orbit o1" d="M228 0A228 86 0 0 1 -228 0" stroke="url(#ogf1)"/>
+          <path class="orbit o2" d="M228 0A228 86 0 0 1 -228 0" stroke="url(#ogf2)" transform="rotate(45)"/>
+          <path class="orbit o3" d="M228 0A228 86 0 0 1 -228 0" stroke="url(#ogf3)" transform="rotate(-45)"/>
+          <g id="satFront"></g>
+        </svg>
       </div>
     </div>
   </section>
@@ -1469,92 +1488,62 @@
       home.style.setProperty('--my', (e.clientY - r.top) + 'px');
     });
 
-    // ── 3D portrait ──
-    // A cut-out photo is mapped onto a dense plane whose vertices are pushed
-    // toward the camera by a depth map (face forward, shoulders back), then
-    // the mesh tilts toward the pointer under a key light and two rim lights.
-    function initPortrait3D() {
-      const host = document.getElementById('portrait3d');
-      const frame = document.getElementById('portraitFrame');
-      let renderer;
-      try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (e) { return; }
-      if (!renderer.getContext()) return;
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
-      renderer.outputEncoding = THREE.sRGBEncoding;
-      host.appendChild(renderer.domElement);
-
-      const DIST = 10.5, FOV = 28;
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(FOV, 0.8, 0.1, 100);
-      camera.position.set(0, 0, DIST);
-      const viewH = 2 * DIST * Math.tan(FOV / 2 * Math.PI / 180);
-      const H = viewH * 1.14, W = H * 0.8, DEPTH = 1.05, GROUP_Z = -0.4;
-
-      const loadImg = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
-      Promise.all([loadImg('images/profile-3d-tex.webp'), loadImg('images/profile-3d-depth.png')]).then(([texImg, depthImg]) => {
-        const tex = new THREE.Texture(texImg); tex.needsUpdate = true;
-        tex.encoding = THREE.sRGBEncoding; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-
-        const c = document.createElement('canvas'); c.width = depthImg.width; c.height = depthImg.height;
-        const ctx = c.getContext('2d'); ctx.drawImage(depthImg, 0, 0);
-        const px = ctx.getImageData(0, 0, c.width, c.height).data;
-
-        const geo = new THREE.PlaneGeometry(W, H, 110, 138);
-        geo.translate(0, -(H - viewH) / 2, 0);   // top-aligned; extra height hides the bottom edge when tilting
-        const pos = geo.attributes.position, uv = geo.attributes.uv;
-        for (let i = 0; i < pos.count; i++) {
-          const u = uv.getX(i), v = 1 - uv.getY(i);
-          const x = Math.min(c.width - 1, Math.round(u * (c.width - 1)));
-          const y = Math.min(c.height - 1, Math.round(v * (c.height - 1)));
-          const z = px[(y * c.width + x) * 4] / 255 * DEPTH;
-          const k = 1 - z / (DIST - GROUP_Z);   // pull x/y in so the photo looks unchanged head-on
-          pos.setXYZ(i, pos.getX(i) * k, pos.getY(i) * k, z);
+    // ── Hero globe ──
+    // A wireframe sphere (seen from slightly above) turns slowly behind the
+    // monogram; meridians are re-projected each frame and split into near and
+    // far strokes. One satellite rides each orbit, swapping between the back
+    // and front SVG layers as it passes behind or in front of the emblem.
+    (function heroGlobe() {
+      const root = document.querySelector('.hero-globe');
+      const wireF = document.getElementById('wireFront'), wireB = document.getElementById('wireBack');
+      const NS = 'http://www.w3.org/2000/svg', R = 150, TILT = .38, ct = Math.cos(TILT), st = Math.sin(TILT);
+      const A = 228, B = 86;
+      // sphere point (x right, y up, z toward viewer) tilted about the x axis -> [screenX, screenY, depth]
+      const proj = (x, y, z) => [x, -(y * ct - z * st), y * st + z * ct];
+      const f = n => n.toFixed(1);
+      function trace(pts, acc) {
+        for (let i = 1; i < pts.length; i++) {
+          const p = pts[i - 1], q = pts[i], k = p[2] + q[2] > 0 ? 'f' : 'b';
+          if (acc['e' + k] !== p) acc[k] += `M${f(p[0])} ${f(p[1])}`;
+          acc[k] += `L${f(q[0])} ${f(q[1])}`; acc['e' + k] = q;
         }
-        geo.computeVertexNormals();
-
-        const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
-          map: tex, emissiveMap: tex, emissive: 0xffffff, emissiveIntensity: .5,
-          alphaTest: .5, roughness: .85, metalness: 0, side: THREE.DoubleSide,
-        }));
-        const group = new THREE.Group(); group.position.z = GROUP_Z; group.add(mesh); scene.add(group);
-
-        scene.add(new THREE.AmbientLight(0xffffff, .2));
-        const key = new THREE.DirectionalLight(0xffffff, .55); key.position.set(0, 2, 6); scene.add(key);
-        const warm = new THREE.DirectionalLight(0xff8a75, .7); warm.position.set(-5, 1, -2); scene.add(warm);
-        const cool = new THREE.DirectionalLight(0x9cc3ff, .5); cool.position.set(5, -1, -2); scene.add(cool);
-
-        function size() {
-          const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return;
-          renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+      }
+      // latitudes don't change as the sphere spins, so trace them once
+      const lat = { f: '', b: '' };
+      for (const deg of [-60, -30, 0, 30, 60]) {
+        const phi = deg * Math.PI / 180, pts = [];
+        for (let i = 0; i <= 72; i++) { const l = i / 72 * 2 * Math.PI; pts.push(proj(R * Math.cos(phi) * Math.cos(l), R * Math.sin(phi), R * Math.cos(phi) * Math.sin(l))); }
+        trace(pts, lat);
+      }
+      const orbits = [{ a: 0, period: 40, ph: .5 }, { a: 45, period: 54, ph: 2.7 }, { a: -45, period: 68, ph: 4.6 }];
+      for (const o of orbits) {
+        o.back = document.createElementNS(NS, 'circle'); o.front = document.createElementNS(NS, 'circle');
+        o.back.setAttribute('class', 'sat'); o.front.setAttribute('class', 'sat');
+        document.getElementById('satBack').appendChild(o.back); document.getElementById('satFront').appendChild(o.front);
+        o.c = Math.cos(o.a * Math.PI / 180); o.s = Math.sin(o.a * Math.PI / 180);
+      }
+      function draw(t) {
+        const spin = t / 1000 * 2 * Math.PI / 90, acc = { f: lat.f, b: lat.b };
+        for (let m = 0; m < 12; m++) {
+          const th = m * Math.PI / 6 + spin, pts = [];
+          for (let i = 0; i <= 24; i++) { const l = -Math.PI / 2 + i / 24 * Math.PI; pts.push(proj(R * Math.cos(l) * Math.cos(th), R * Math.sin(l), R * Math.cos(l) * Math.sin(th))); }
+          trace(pts, acc);
         }
-        size(); new ResizeObserver(size).observe(host);
-
-        const pointer = { x: 0, y: 0 };
-        addEventListener('pointermove', e => { pointer.x = e.clientX / innerWidth * 2 - 1; pointer.y = -(e.clientY / innerHeight * 2 - 1); }, { passive: true });
-        const damp = (a, b, l, dt) => a + (b - a) * (1 - Math.exp(-l * dt));
-        let last = performance.now(), started = false, raf = 0, visible = true;
-        const resume = () => { cancelAnimationFrame(raf); if (visible && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(tick); } };
-        new IntersectionObserver(([en]) => { visible = en.isIntersecting; resume(); }, { rootMargin: '100px' }).observe(host);
-        document.addEventListener('visibilitychange', resume);
-        function tick(now) {
-          const dt = Math.min((now - last) / 1000, .05); last = now;
-          const sway = reduce ? 0 : Math.sin(now / 2000) * .05;
-          group.rotation.y = damp(group.rotation.y, pointer.x * .17 + sway, 8, dt);
-          group.rotation.x = damp(group.rotation.x, -pointer.y * .09, 8, dt);
-          key.position.x = damp(key.position.x, pointer.x * 6, 3, dt);
-          key.position.y = damp(key.position.y, 2 + pointer.y * 3, 3, dt);
-          renderer.render(scene, camera);
-          if (!started) { started = true; frame.classList.add('is-3d'); }
-          raf = requestAnimationFrame(tick);
+        wireF.setAttribute('d', acc.f); wireB.setAttribute('d', acc.b);
+        for (const o of orbits) {
+          const u = o.ph + t / 1000 / o.period * 2 * Math.PI, lx = A * Math.cos(u), ly = B * Math.sin(u), near = (Math.sin(u) + 1) / 2;
+          const x = f(lx * o.c - ly * o.s), y = f(lx * o.s + ly * o.c), r = f(2.6 + near * 2.2), op = (.35 + near * .65).toFixed(2);
+          for (const el of [o.back, o.front]) { el.setAttribute('cx', x); el.setAttribute('cy', y); el.setAttribute('r', r); }
+          o.front.style.opacity = ly > 0 ? op : 0; o.back.style.opacity = ly > 0 ? 0 : op;
         }
-        resume();
-      }).catch(() => { /* keep the flat photo */ });
-    }
-    (function loadThree() {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-      s.onload = initPortrait3D;
-      document.head.appendChild(s);
+      }
+      let raf = 0, visible = true;
+      const tick = now => { draw(now); raf = requestAnimationFrame(tick); };
+      const resume = () => { cancelAnimationFrame(raf); if (visible && !document.hidden) raf = requestAnimationFrame(tick); };
+      draw(0);
+      if (reduce) return;
+      new IntersectionObserver(([en]) => { visible = en.isIntersecting; resume(); }).observe(root);
+      document.addEventListener('visibilitychange', resume);
     })();
 
     // ── Live bubbles ──
@@ -1631,7 +1620,7 @@
         place(b, true); paint(b);
       }
       // bubbles sit behind the page: only pop them through empty background, never through cards, controls or the dark contact block
-      const interactive = el => el.closest('a, button, input, select, textarea, label, header, .palette, .card, .project-card, .paper-feature, .paper-card, .chip, .stats, .hero-portrait, .float-badge, #contact, footer');
+      const interactive = el => el.closest('a, button, input, select, textarea, label, header, .palette, .card, .project-card, .paper-feature, .paper-card, .chip, .stats, .hero-globe, #contact, footer');
       addEventListener('pointermove', e => {
         if (mouse.x > -999) { mouse.vx += (e.clientX - mouse.x) * .5; mouse.vy += (e.clientY - mouse.y) * .5; }
         mouse.x = e.clientX; mouse.y = e.clientY;
