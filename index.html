@@ -47,21 +47,21 @@
     :root[data-theme="dark"] {
       --ivory:     #0E0E10;
       --parchment: #141417;
-      --warm-100:  #26262B;
-      --warm-200:  #3A3A41;
-      --gold:      #E5533F;
-      --gold-light:#FF6B57;
-      --gold-dim:  rgba(229,83,63,.14);
-      --ink:       #F3F1EE;
-      --ink-2:     #DCDAD6;
-      --muted:     #B4B1AC;
-      --muted-2:   #85827D;
-      --white:     #1A1A1E;
-      --shadow-sm: 0 2px 12px rgba(0,0,0,.4);
-      --shadow-md: 0 6px 32px rgba(0,0,0,.5);
-      --shadow-lg: 0 16px 64px rgba(0,0,0,.6);
+      --warm-100:  #33333B;
+      --warm-200:  #4D4D57;
+      --gold:      #F0604B;
+      --gold-light:#FF7A66;
+      --gold-dim:  rgba(240,96,75,.16);
+      --ink:       #F5F3F0;
+      --ink-2:     #E4E2DE;
+      --muted:     #C3C0BA;
+      --muted-2:   #9E9A93;
+      --white:     #1D1D22;
+      --shadow-sm: 0 2px 12px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.02);
+      --shadow-md: 0 6px 32px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.03);
+      --shadow-lg: 0 16px 64px rgba(0,0,0,.65);
       --glass:     rgba(14,14,16,.82);
-      --dark-media: 88%;
+      --dark-media: 78%;
       color-scheme: dark;
     }
 
@@ -179,8 +179,8 @@
       display: inline-flex; align-items: center; gap: 10px;
       font-size: .78rem; font-weight: 600; letter-spacing: .16em;
       text-transform: uppercase; color: var(--gold);
-      border: 1.5px solid rgba(192,57,43,.3);
-      background: rgba(192,57,43,.06);
+      border: 1.5px solid color-mix(in srgb, var(--gold) 40%, transparent);
+      background: var(--gold-dim);
       padding: 7px 16px; border-radius: 999px; margin-bottom: 28px;
     }
     .pulse {
@@ -216,7 +216,22 @@
       overflow: hidden; background: var(--parchment);
       box-shadow: var(--shadow-lg);
     }
-    .portrait-frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+    .portrait-frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transition: opacity .6s ease; }
+    /* 3D portrait: depth-displaced WebGL mesh; the <img> stays as the no-WebGL fallback */
+    .portrait-3d { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; }
+    .portrait-3d canvas { display: block; width: 100% !important; height: 100% !important; }
+    .portrait-frame.is-3d {
+      background:
+        radial-gradient(70% 55% at 50% 38%, rgba(255,255,255,.95), transparent 70%),
+        linear-gradient(165deg, #FBE3DD 0%, #F3EEEC 55%, #E9E9EE 100%);
+    }
+    :root[data-theme="dark"] .portrait-frame.is-3d {
+      background:
+        radial-gradient(70% 55% at 50% 38%, rgba(240,96,75,.22), transparent 70%),
+        linear-gradient(165deg, #2B1D1B 0%, #1E1C21 60%, #17171B 100%);
+    }
+    .portrait-frame.is-3d img { opacity: 0; }
+    .portrait-frame.is-3d .portrait-3d { opacity: 1; }
     .portrait-ring {
       position: absolute; inset: -18px; z-index: 0;
       border: 1.5px dashed var(--warm-200);
@@ -328,6 +343,11 @@
     }
     .chip:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(192,57,43,.12); transform: translateY(-2px); }
     .chip img { width: 22px; height: 22px; object-fit: contain; }
+    /* several logos are dark or have white boxes: sit them on a light tile in dark mode */
+    :root[data-theme="dark"] .chip img { background: #F5F3F0; border-radius: 6px; padding: 2px; width: 24px; height: 24px; }
+    /* github.png is a white mark: black on light chips, bare white on dark ones */
+    .chip img[src$="github.png"] { filter: invert(1); }
+    :root[data-theme="dark"] .chip img[src$="github.png"] { filter: none; background: none; padding: 0; }
     .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
 
     /* ── PROJECTS (stacked cards) ────────────────────────────────── */
@@ -471,6 +491,13 @@
     .bench th { font-weight: 600; color: var(--muted-2); font-size: .74rem; }
     .bench td { color: var(--ink-2); font-variant-numeric: tabular-nums; }
     .bench .win { color: #1E9E5A; font-weight: 600; }
+    :root[data-theme="dark"] .bench .win { color: #3DDC84; }
+    :root[data-theme="dark"] .project-card,
+    :root[data-theme="dark"] .paper-feature,
+    :root[data-theme="dark"] .paper-card,
+    :root[data-theme="dark"] .card { border-color: #3A3A43; }
+    :root[data-theme="dark"] .tag { background: #26262C; border-color: #3A3A43; color: var(--ink-2); }
+    :root[data-theme="dark"] .project-media::before { background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px); }
     .bench .lose { color: var(--muted-2); }
 
     /* IRRIS visualizer */
@@ -536,6 +563,44 @@
       position: absolute; right: 24px; top: 26px; font-size: 2rem; opacity: .16;
       font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 700; color: var(--ink);
     }
+
+    /* ── LIVE BUBBLES ────────────────────────────────────────────── */
+    /* each bubble is its own composited layer moved with transforms, so the page never repaints for them */
+    #bubbles {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; contain: strict;
+      --bub-edge: rgba(120,130,170,.26); --bub-shine: rgba(255,255,255,.95); --bub-shine-2: rgba(255,255,255,.75);
+    }
+    :root[data-theme="dark"] #bubbles { --bub-edge: rgba(255,255,255,.13); --bub-shine: rgba(255,255,255,.55); --bub-shine-2: rgba(255,255,255,.3); }
+    .bubble, .pop-ring, .pop-dot { position: absolute; left: 0; top: 0; border-radius: 50%; will-change: transform; }
+    .bubble {
+      background:
+        radial-gradient(ellipse 22% 12% at 31% 27%, var(--bub-shine), transparent 100%),
+        radial-gradient(circle at 71% 71%, var(--bub-shine-2) 0 3%, transparent 3.6%),
+        radial-gradient(circle, transparent 58%, var(--bub-edge) 100%);
+    }
+    .bubble::after, .pop-ring {
+      content: ''; position: absolute; inset: 0; border-radius: 50%;
+      padding: var(--rim, 1.5px);
+      background: conic-gradient(from var(--h, 0deg), #ff9ad5, #9be8ff, #ffe48a, #b9a2ff, #ff9ad5);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      opacity: .85; animation: bub-spin var(--spin, 14s) linear infinite;
+    }
+    @keyframes bub-spin { to { transform: rotate(1turn); } }
+    .pop-ring { inset: auto; animation: bub-ring .5s ease-out forwards; }
+    @keyframes bub-ring { from { opacity: .9; } to { opacity: 0; scale: 1.7; } }
+    .pop-dot { width: 4px; height: 4px; transition: transform .55s cubic-bezier(.2,.7,.3,1), opacity .55s ease; }
+    /* grey sections are slightly see-through so bubbles drift faintly behind them */
+    #about, #projects { background: color-mix(in srgb, var(--parchment) 84%, transparent); }
+    html.over-bubble, html.over-bubble body { cursor: pointer; }
+
+    /* hero spotlight that follows the cursor */
+    #home::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(420px circle at var(--mx, 70%) var(--my, 30%), color-mix(in srgb, var(--gold) 12%, transparent), transparent 70%);
+      transition: opacity .4s ease;
+    }
+    .hero-inner { position: relative; z-index: 1; }
 
     /* ── HEADER TOOLS (theme + command palette) ──────────────────── */
     .icon-btn {
@@ -695,6 +760,7 @@
 <body>
 
   <div class="progress" id="progress"></div>
+  <div id="bubbles" aria-hidden="true"></div>
 
   <!-- ── HEADER ── -->
   <header>
@@ -744,8 +810,9 @@
       <div class="hero-portrait reveal">
         <div class="portrait-accent" aria-hidden="true"></div>
         <div class="portrait-ring" aria-hidden="true"></div>
-        <div class="portrait-frame">
+        <div class="portrait-frame" id="portraitFrame">
           <img src="images/profile.webp" alt="Portrait of Pravin P" width="800" height="1000" fetchpriority="high"/>
+          <div class="portrait-3d" id="portrait3d" aria-hidden="true"></div>
         </div>
         <div class="float-badge one"><b>3</b><small>Internships<br>completed</small></div>
         <div class="float-badge two"><b>B.Tech</b><small>Information<br>Technology</small></div>
@@ -1394,6 +1461,191 @@
     inputSel.addEventListener('change', () => { runBtn.textContent = '▶ Run IRRIS'; reset(); });
     reset();
 
+    // ── Hero spotlight follows the cursor ──
+    const home = document.getElementById('home');
+    home.addEventListener('pointermove', e => {
+      const r = home.getBoundingClientRect();
+      home.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      home.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+
+    // ── 3D portrait ──
+    // A cut-out photo is mapped onto a dense plane whose vertices are pushed
+    // toward the camera by a depth map (face forward, shoulders back), then
+    // the mesh tilts toward the pointer under a key light and two rim lights.
+    function initPortrait3D() {
+      const host = document.getElementById('portrait3d');
+      const frame = document.getElementById('portraitFrame');
+      let renderer;
+      try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (e) { return; }
+      if (!renderer.getContext()) return;
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      host.appendChild(renderer.domElement);
+
+      const DIST = 10.5, FOV = 28;
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(FOV, 0.8, 0.1, 100);
+      camera.position.set(0, 0, DIST);
+      const viewH = 2 * DIST * Math.tan(FOV / 2 * Math.PI / 180);
+      const H = viewH * 1.14, W = H * 0.8, DEPTH = 1.05, GROUP_Z = -0.4;
+
+      const loadImg = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+      Promise.all([loadImg('images/profile-3d-tex.webp'), loadImg('images/profile-3d-depth.png')]).then(([texImg, depthImg]) => {
+        const tex = new THREE.Texture(texImg); tex.needsUpdate = true;
+        tex.encoding = THREE.sRGBEncoding; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+        const c = document.createElement('canvas'); c.width = depthImg.width; c.height = depthImg.height;
+        const ctx = c.getContext('2d'); ctx.drawImage(depthImg, 0, 0);
+        const px = ctx.getImageData(0, 0, c.width, c.height).data;
+
+        const geo = new THREE.PlaneGeometry(W, H, 110, 138);
+        geo.translate(0, -(H - viewH) / 2, 0);   // top-aligned; extra height hides the bottom edge when tilting
+        const pos = geo.attributes.position, uv = geo.attributes.uv;
+        for (let i = 0; i < pos.count; i++) {
+          const u = uv.getX(i), v = 1 - uv.getY(i);
+          const x = Math.min(c.width - 1, Math.round(u * (c.width - 1)));
+          const y = Math.min(c.height - 1, Math.round(v * (c.height - 1)));
+          const z = px[(y * c.width + x) * 4] / 255 * DEPTH;
+          const k = 1 - z / (DIST - GROUP_Z);   // pull x/y in so the photo looks unchanged head-on
+          pos.setXYZ(i, pos.getX(i) * k, pos.getY(i) * k, z);
+        }
+        geo.computeVertexNormals();
+
+        const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+          map: tex, emissiveMap: tex, emissive: 0xffffff, emissiveIntensity: .5,
+          alphaTest: .5, roughness: .85, metalness: 0, side: THREE.DoubleSide,
+        }));
+        const group = new THREE.Group(); group.position.z = GROUP_Z; group.add(mesh); scene.add(group);
+
+        scene.add(new THREE.AmbientLight(0xffffff, .2));
+        const key = new THREE.DirectionalLight(0xffffff, .55); key.position.set(0, 2, 6); scene.add(key);
+        const warm = new THREE.DirectionalLight(0xff8a75, .7); warm.position.set(-5, 1, -2); scene.add(warm);
+        const cool = new THREE.DirectionalLight(0x9cc3ff, .5); cool.position.set(5, -1, -2); scene.add(cool);
+
+        function size() {
+          const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return;
+          renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+        }
+        size(); new ResizeObserver(size).observe(host);
+
+        const pointer = { x: 0, y: 0 };
+        addEventListener('pointermove', e => { pointer.x = e.clientX / innerWidth * 2 - 1; pointer.y = -(e.clientY / innerHeight * 2 - 1); }, { passive: true });
+        const damp = (a, b, l, dt) => a + (b - a) * (1 - Math.exp(-l * dt));
+        let last = performance.now(), started = false, raf = 0, visible = true;
+        const resume = () => { cancelAnimationFrame(raf); if (visible && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(tick); } };
+        new IntersectionObserver(([en]) => { visible = en.isIntersecting; resume(); }, { rootMargin: '100px' }).observe(host);
+        document.addEventListener('visibilitychange', resume);
+        function tick(now) {
+          const dt = Math.min((now - last) / 1000, .05); last = now;
+          const sway = reduce ? 0 : Math.sin(now / 2000) * .05;
+          group.rotation.y = damp(group.rotation.y, pointer.x * .17 + sway, 8, dt);
+          group.rotation.x = damp(group.rotation.x, -pointer.y * .09, 8, dt);
+          key.position.x = damp(key.position.x, pointer.x * 6, 3, dt);
+          key.position.y = damp(key.position.y, 2 + pointer.y * 3, 3, dt);
+          renderer.render(scene, camera);
+          if (!started) { started = true; frame.classList.add('is-3d'); }
+          raf = requestAnimationFrame(tick);
+        }
+        resume();
+      }).catch(() => { /* keep the flat photo */ });
+    }
+    (function loadThree() {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      s.onload = initPortrait3D;
+      document.head.appendChild(s);
+    })();
+
+    // ── Live bubbles ──
+    // Soap-film bubbles drift upward behind the page, swerve away from the
+    // cursor, ride along with scrolling, and pop when clicked. Each bubble is
+    // a DOM layer moved with transforms (no full-screen canvas repaint).
+    const bub = (() => {
+      const layer = document.getElementById('bubbles');
+      let W = innerWidth, H = innerHeight, list = [], mouse = { x: -999, y: -999, vx: 0, vy: 0 }, lastScroll = scrollY, raf = 0;
+      const rand = (a, b) => a + Math.random() * (b - a);
+      function place(b, atBottom) {
+        const small = innerWidth <= 600;
+        b.r = Math.random() < .18 ? rand(small ? 34 : 52, small ? 46 : 76) : rand(small ? 10 : 14, small ? 26 : 40);
+        b.x = rand(b.r, W - b.r); b.y = atBottom ? H + b.r + rand(0, 200) : rand(b.r, H - b.r);
+        b.vx = b.vy = 0; b.rise = rand(.18, .45) * (40 / b.r) ** .35; b.ph = rand(0, 6.28); b.depth = rand(.4, 1);
+        const el = b.el;
+        el.style.width = el.style.height = b.r * 2 + 'px';
+        el.style.setProperty('--rim', Math.max(1.2, b.r * .055) + 'px');
+        el.style.setProperty('--h', rand(0, 360) + 'deg');
+        el.style.setProperty('--spin', rand(10, 20) + 's');
+        return b;
+      }
+      function make() { const el = document.createElement('div'); el.className = 'bubble'; layer.appendChild(el); return place({ el }, false); }
+      function resize() {
+        W = innerWidth; H = innerHeight;
+        const want = Math.round(Math.min(Math.max(W * H / 130000, 5), 11));
+        while (list.length < want) list.push(make());
+        while (list.length > want) list.pop().el.remove();
+      }
+      const paint = b => { b.el.style.transform = `translate3d(${b.x - b.r}px, ${b.y - b.r}px, 0)`; };
+      function step() {
+        const sc = scrollY - lastScroll; lastScroll = scrollY;
+        const speed = Math.hypot(mouse.vx, mouse.vy);
+        mouse.vx *= .7; mouse.vy *= .7;
+        for (const b of list) {
+          b.ph += .012;
+          // a fast swipe blows nearby bubbles along like wind; a slow cursor can rest inside one to catch it
+          const d = Math.hypot(b.x - mouse.x, b.y - mouse.y), R = b.r + 90;
+          b.held = d <= b.r + 8;
+          if (b.held) { b.vx *= .8; b.vy *= .8; }
+          else if (d < R && speed > 6) { const f = (1 - d / R) * .07 * Math.min(speed - 6, 30) / speed; b.vx += mouse.vx * f; b.vy += mouse.vy * f; }
+          b.vx *= .95; b.vy *= .95;
+          const sp = Math.hypot(b.vx, b.vy); if (sp > 9) { b.vx *= 9 / sp; b.vy *= 9 / sp; }
+          b.x += b.vx + (b.held ? 0 : Math.sin(b.ph) * .35);
+          b.y += b.vy - (b.held ? b.rise * .15 : b.rise) - sc * .18 * b.depth;
+          if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx); } else if (b.x > W - b.r) { b.x = W - b.r; b.vx = -Math.abs(b.vx); }
+          if (b.y < -b.r - 20) place(b, true);
+          if (b.y > H + b.r + 260) b.y = -b.r;
+        }
+        // keep bubbles from overlapping
+        for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) {
+          const a = list[i], c = list[j], dx = c.x - a.x, dy = c.y - a.y, d = Math.hypot(dx, dy), m = a.r + c.r;
+          if (d < m && d > .1) { const p = (m - d) / d * .05; a.vx -= dx * p; a.vy -= dy * p; c.vx += dx * p; c.vy += dy * p; }
+        }
+        list.forEach(paint);
+        raf = requestAnimationFrame(step);
+      }
+      const hit = (x, y) => list.find(b => Math.hypot(b.x - x, b.y - y) < b.r + 8);
+      function pop(b) {
+        const ring = document.createElement('div'); ring.className = 'pop-ring';
+        ring.style.cssText = `width:${b.r * 2}px;height:${b.r * 2}px;transform:translate3d(${b.x - b.r}px,${b.y - b.r}px,0);--h:${rand(0, 360)}deg;--rim:1.5px`;
+        layer.appendChild(ring); setTimeout(() => ring.remove(), 520);
+        for (let k = 0; k < 10; k++) {
+          const a = k / 10 * 6.2832, dot = document.createElement('div'); dot.className = 'pop-dot';
+          dot.style.background = `hsl(${k * 36}, 90%, 70%)`;
+          const sx = b.x + Math.cos(a) * b.r, sy = b.y + Math.sin(a) * b.r, dist = rand(18, 40);
+          dot.style.transform = `translate3d(${sx}px,${sy}px,0)`;
+          layer.appendChild(dot);
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            dot.style.transform = `translate3d(${sx + Math.cos(a) * dist}px,${sy + Math.sin(a) * dist + 14}px,0)`; dot.style.opacity = '0';
+          }));
+          setTimeout(() => dot.remove(), 600);
+        }
+        place(b, true); paint(b);
+      }
+      // bubbles sit behind the page: only pop them through empty background, never through cards, controls or the dark contact block
+      const interactive = el => el.closest('a, button, input, select, textarea, label, header, .palette, .card, .project-card, .paper-feature, .paper-card, .chip, .stats, .hero-portrait, .float-badge, #contact, footer');
+      addEventListener('pointermove', e => {
+        if (mouse.x > -999) { mouse.vx += (e.clientX - mouse.x) * .5; mouse.vy += (e.clientY - mouse.y) * .5; }
+        mouse.x = e.clientX; mouse.y = e.clientY;
+        document.documentElement.classList.toggle('over-bubble', !!hit(e.clientX, e.clientY) && !interactive(e.target));
+      }, { passive: true });
+      document.addEventListener('pointerleave', () => { mouse.x = mouse.y = -999; mouse.vx = mouse.vy = 0; });
+      addEventListener('pointerdown', e => { if (interactive(e.target)) return; const b = hit(e.clientX, e.clientY); if (b) pop(b); });
+      function start() { cancelAnimationFrame(raf); if (!reduce && !document.hidden) { lastScroll = scrollY; raf = requestAnimationFrame(step); } }
+      document.addEventListener('visibilitychange', start);
+      addEventListener('resize', resize);
+      resize(); list.forEach(paint); start();
+      return { popAll: () => list.slice().forEach(pop) };
+    })();
+
     // ── Command palette (Ctrl/⌘ + K) ──
     const go = id => () => document.querySelector(id).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
     const open = url => () => window.open(url, '_blank', 'noopener');
@@ -1406,7 +1658,8 @@
       { label: 'Experience', hint: 'Section', run: go('#experience') },
       { label: 'Contact', hint: 'Section', run: go('#contact') },
       { label: 'Toggle dark mode', hint: 'Action', run: toggleTheme },
-      { label: 'Download résumé', hint: 'PDF', run: () => { const a = document.createElement('a'); a.href = 'Pravin-Resume.pdf'; a.download = ''; a.click(); } },
+      { label: 'Pop all the bubbles', hint: 'Fun', run: () => bub.popAll() },
+      { label: 'Download resume', hint: 'PDF', run: () => { const a = document.createElement('a'); a.href = 'Pravin-Resume.pdf'; a.download = ''; a.click(); } },
       { label: 'Email Pravin', hint: 'Gmail', run: open('https://mail.google.com/mail/?view=cm&fs=1&to=contact.pravinp@gmail.com') },
       { label: 'Note Share — live site', hint: 'Link', run: open('https://rmkec-note-sharing.web.app') },
       { label: 'GitHub', hint: 'Link', run: open('https://github.com/Pravinprabu') },
